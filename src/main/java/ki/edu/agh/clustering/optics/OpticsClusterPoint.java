@@ -1,32 +1,23 @@
 package ki.edu.agh.clustering.optics;
 
 import ki.edu.agh.clustering.ClusterPoint;
-import ki.edu.agh.population.Individual;
-import ki.edu.agh.population.Point;
+import ki.edu.agh.point.MetricSpacePoint;
 
-public class OpticsClusterPoint implements ClusterPoint {
+public class OpticsClusterPoint<T> implements ClusterPoint<T>, MetricSpacePoint {
 	public static final double UNDEFINED = Double.MAX_VALUE;
 	public static final int NOISE = Integer.MAX_VALUE;
 
 	private boolean processed;
 	private int clusterId;
-	private Individual individual;
 	private double coreDistance;
 	private double reachabilityDistance;
+	private T data;
 
-	public OpticsClusterPoint(Individual individual) {
-		this.individual = individual;
+	public OpticsClusterPoint(T data) {
+		this.data = data;
 		this.processed = false;
 		this.coreDistance = UNDEFINED;
 		this.reachabilityDistance = UNDEFINED;
-	}
-
-	@Override
-	public double getDistance(ClusterPoint clusterPoint) {
-		OpticsClusterPoint cPoint = (OpticsClusterPoint) clusterPoint;
-		Point spatialPoint = cPoint.getIndividual().getPhenotype().getPoint();
-		return individual.getPhenotype().getPoint()
-				.euclideanDistance(spatialPoint);
 	}
 
 	@Override
@@ -40,10 +31,6 @@ public class OpticsClusterPoint implements ClusterPoint {
 
 	public double getCoreDistance() {
 		return coreDistance;
-	}
-
-	public Individual getIndividual() {
-		return individual;
 	}
 
 	public double getReachabilityDistance() {
@@ -68,5 +55,16 @@ public class OpticsClusterPoint implements ClusterPoint {
 
 	public void setReachabilityDistance(double reachabilityDistance) {
 		this.reachabilityDistance = reachabilityDistance;
+	}
+
+	@Override
+	public double getDistance(MetricSpacePoint point) {
+		MetricSpacePoint msp = (MetricSpacePoint) data;
+		return msp.getDistance(point);
+	}
+
+	@Override
+	public T getData() {
+		return data;
 	}
 }

@@ -6,6 +6,10 @@ public interface Population extends Iterable<Individual> {
 	void addAll(Individual[] individuals);
 
 	Individual[] getAllMembers();
+	
+	Individual get(int i);
 
 	int getSize();
+	
+	void sortMembers();
 }

@@ -1,4 +1,4 @@
-package ki.edu.agh.algorithm;
+package ki.edu.agh.demoalg;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Set;
 
 import ki.edu.agh.fintess.FitnessFunction;
-import ki.edu.agh.population.Point;
+import ki.edu.agh.point.EuclideanSpacePoint;
 
 public class AlgorithmImpl implements Algorithm {
 	public void choose() {
 		double epsilon = 0;
 		double treshold = 0;
 		double delta = 0;
-		List<Point> clusterOrderedObjs = null;
+		List<EuclideanSpacePoint> clusterOrderedObjs = null;
 		int minPts = 0;
 		double minDistance = 0.0;
 
@@ -59,7 +59,7 @@ public class AlgorithmImpl implements Algorithm {
 	}
 
 	private Collection<Cluster> extractDbScanClustering(
-			List<Point> clusterOrderedObjs, double epsilon, int minPts) {
+			List<EuclideanSpacePoint> clusterOrderedObjs, double epsilon, int minPts) {
 		// TODO Auto-generated method stub
 		return null;
 	}

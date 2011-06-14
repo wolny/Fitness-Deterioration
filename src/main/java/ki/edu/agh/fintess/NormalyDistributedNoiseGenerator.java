@@ -2,9 +2,9 @@ package ki.edu.agh.fintess;
 
 import java.util.Random;
 
+import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.Phenotype;
-import ki.edu.agh.population.Point;
-import ki.edu.agh.population.RealVectorPhenotype;
+import ki.edu.agh.population.EuclideanSpacePhenotype;
 
 /**
  * adds normally distributed vector \delta to a given phenotype;
@@ -16,7 +16,7 @@ public class NormalyDistributedNoiseGenerator implements
 		PhenotypeNoiseGenerator {
 
 	private Random random = new Random();
-	double standardDeviation;
+	private double standardDeviation;
 
 	public NormalyDistributedNoiseGenerator(double standardDeviation) {
 		this.standardDeviation = standardDeviation;
@@ -30,15 +30,22 @@ public class NormalyDistributedNoiseGenerator implements
 	 */
 	@Override
 	public Phenotype addRandomNoise(Phenotype phenotype) {
-		Point point = phenotype.getPoint();
+		if (!(phenotype instanceof EuclideanSpacePhenotype)) {
+			throw new RuntimeException(getClass().getName()
+					+ " can only be applied to "
+					+ EuclideanSpacePhenotype.class.getName());
+		}
+		EuclideanSpacePoint point = ((EuclideanSpacePhenotype) phenotype)
+				.getPoint();
 		int dimension = point.getDimension();
 		double[] coords = new double[dimension];
 		for (int i = 0; i < dimension; i++) {
 			coords[i] = random.nextGaussian() * standardDeviation;
 		}
 
-		Point noisyPoint = point.add(new Point(coords));
-		return new RealVectorPhenotype(noisyPoint);
+		EuclideanSpacePoint noisyPoint = point.add(new EuclideanSpacePoint(
+				coords));
+		return new EuclideanSpacePhenotype(noisyPoint);
 	}
 
 }

@@ -1,6 +1,7 @@
 package ki.edu.agh.fintess;
 
 import ki.edu.agh.functors.Functor;
+import ki.edu.agh.population.EuclideanSpacePhenotype;
 import ki.edu.agh.population.Phenotype;
 
 public class StandardFitnessFunction implements FitnessFunction {
@@ -20,7 +21,8 @@ public class StandardFitnessFunction implements FitnessFunction {
 
 	@Override
 	public double computeFitness(Phenotype phenotype) {
-		return functor.getValue(phenotype.getPoint());
+		return functor.getValue(((EuclideanSpacePhenotype) phenotype)
+				.getPoint());
 	}
 
 }

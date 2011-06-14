@@ -1,7 +1,7 @@
 package ki.edu.agh.clustering;
 
-public interface ClusterPoint {
+public interface ClusterPoint<T> {
 	int getClusterId();
 
-	double getDistance(ClusterPoint clusterPoint);
+	T getData();
 }

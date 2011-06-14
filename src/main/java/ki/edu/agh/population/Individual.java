@@ -42,6 +42,6 @@ public class Individual {
 
 	@Override
 	public String toString() {
-		return getPhenotype().getPoint() + "	" + getFitness();
+		return getPhenotype() + "	" + getFitness();
 	}
 }

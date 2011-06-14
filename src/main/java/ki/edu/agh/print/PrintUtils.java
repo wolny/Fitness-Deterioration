@@ -28,7 +28,7 @@ public class PrintUtils {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Population population = Utils.createRandomUniModalPopulation(2);
+		Population population = Utils.createRandomUniModalPopulation(2, 10);
 		writePopulation("population", population);
 
 		double x = 0.11303800698725097;

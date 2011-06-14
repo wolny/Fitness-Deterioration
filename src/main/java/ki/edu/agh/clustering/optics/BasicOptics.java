@@ -1,40 +1,43 @@
 package ki.edu.agh.clustering.optics;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
-import ki.edu.agh.population.Individual;
-import ki.edu.agh.population.Population;
+import ki.edu.agh.point.MetricSpaceUtils;
 
-public class BasicOptics {
+public class BasicOptics<T> {
+	private List<OpticsClusterPoint<T>> setOfObjects;
+	private int minPoints;
+	private double epsilon;
 
-	private Set<OpticsClusterPoint> clusterPointSet;
-
-	public BasicOptics(Set<OpticsClusterPoint> clusterPointSet) {
-		this.clusterPointSet = clusterPointSet;
+	public List<OpticsClusterPoint<T>> getSetOfObjects() {
+		return setOfObjects;
 	}
 
-	public BasicOptics(Population population) {
-		Set<OpticsClusterPoint> cPointSet = new HashSet<OpticsClusterPoint>();
-		for (Individual individual : population) {
-			cPointSet.add(new OpticsClusterPoint(individual));
-		}
-		this.clusterPointSet = cPointSet;
+	public void setSetOfObjects(List<OpticsClusterPoint<T>> setOfObjects) {
+		this.setOfObjects = setOfObjects;
 	}
 
-	public List<OpticsClusterPoint> getEpsilonNeighbor(
-			OpticsClusterPoint clusterPoint, double epsilon) {
+	public int getMinPoints() {
+		return minPoints;
+	}
 
-		ArrayList<OpticsClusterPoint> result = new ArrayList<OpticsClusterPoint>();
+	public void setMinPoints(int minPoints) {
+		this.minPoints = minPoints;
+	}
 
-		for (OpticsClusterPoint cPoint : clusterPointSet) {
-			if (clusterPoint.getDistance(cPoint) <= epsilon) {
-				result.add(cPoint);
-			}
-		}
+	public double getEpsilon() {
+		return epsilon;
+	}
 
-		return result;
+	public void setEpsilon(double epsilon) {
+		this.epsilon = epsilon;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection<OpticsClusterPoint<T>> getEpsilonNeighbor(
+			OpticsClusterPoint<T> point, double epsilon) {
+		return (Collection<OpticsClusterPoint<T>>) MetricSpaceUtils
+				.getEpsilonNeighbor(point, setOfObjects, epsilon);
 	}
 }

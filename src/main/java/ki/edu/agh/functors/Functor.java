@@ -1,7 +1,7 @@
 package ki.edu.agh.functors;
 
-import ki.edu.agh.population.Point;
+import ki.edu.agh.point.EuclideanSpacePoint;
 
 public interface Functor {
-	double getValue(Point point);
+	double getValue(EuclideanSpacePoint point);
 }

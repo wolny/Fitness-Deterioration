@@ -4,7 +4,7 @@ import ki.edu.agh.population.Phenotype;
 
 public interface PhenotypeNoiseGenerator {
 	/**
-	 * adds ranodm noise to the phenotype properties; probability distribution
+	 * adds random noise to the phenotype's properties; probability distribution
 	 * of the noise depends on the implementation
 	 * 
 	 * @param phenotype

@@ -1,4 +1,4 @@
-package ki.edu.agh.algorithm;
+package ki.edu.agh.demoalg;
 
 public interface Algorithm {
 

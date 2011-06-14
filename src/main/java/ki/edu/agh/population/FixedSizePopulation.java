@@ -1,39 +1,18 @@
 package ki.edu.agh.population;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class FixedSizePopulation implements Population {
 
+	private int currentSize;
 	private Individual[] individuals;
 	private int populationSizeLimit;
-	private int currentSize;
 
 	public FixedSizePopulation(int populationSizeLimit) {
 		this.populationSizeLimit = populationSizeLimit;
 		this.individuals = new Individual[populationSizeLimit];
 		this.currentSize = 0;
-	}
-
-	@Override
-	public Iterator<Individual> iterator() {
-		return new Iterator<Individual>() {
-			private int currentIndex;
-
-			@Override
-			public boolean hasNext() {
-				return currentIndex < individuals.length;
-			}
-
-			@Override
-			public Individual next() {
-				return individuals[currentIndex++];
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
 	}
 
 	@Override
@@ -49,6 +28,11 @@ public class FixedSizePopulation implements Population {
 	}
 
 	@Override
+	public Individual get(int i) {
+		return individuals[i];
+	}
+
+	@Override
 	public Individual[] getAllMembers() {
 		return individuals;
 	}
@@ -60,6 +44,44 @@ public class FixedSizePopulation implements Population {
 
 	public int getSizeLimit() {
 		return populationSizeLimit;
+	}
+
+	@Override
+	public Iterator<Individual> iterator() {
+		return new Iterator<Individual>() {
+			private int currentIndex = 0;
+
+			@Override
+			public boolean hasNext() {
+				return currentIndex < getSize();
+			}
+
+			@Override
+			public Individual next() {
+				return individuals[currentIndex++];
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+
+	@Override
+	public void sortMembers() {
+		Arrays.sort(individuals, 0, getSize(), new IndividualComparator());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		for (Individual individual : individuals) {
+			sb.append(individual + "\n");
+		}
+
+		return sb.toString();
 	}
 
 }
