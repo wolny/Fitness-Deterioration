@@ -25,8 +25,14 @@ public class RobustFitnessFunction implements FitnessFunction {
 	/**
 	 * default noise generator
 	 */
-	private PhenotypeNoiseGenerator noiseGenerator = new NormalyDistributedNoiseGenerator(
-			1.0);
+	private PhenotypeNoiseGenerator noiseGenerator = new PhenotypeNoiseGenerator() {
+
+		@Override
+		public Phenotype addRandomNoise(Phenotype phenotype) {
+			// by default do not add any noise to phenotype
+			return phenotype;
+		}
+	};
 
 	public RobustFitnessFunction(double standardDeviation,
 			FitnessFunction fitness) {

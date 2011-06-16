@@ -6,15 +6,16 @@ import java.util.Collection;
 import java.util.Random;
 
 import ki.edu.agh.clustering.Cluster;
-import ki.edu.agh.deterioration.DeteriorationFunction;
 import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.fintess.StandardFitnessFunction;
+import ki.edu.agh.functors.Functor;
 import ki.edu.agh.functors.UniModalFunction;
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.EuclideanSpacePhenotype;
 import ki.edu.agh.population.FixedSizePopulation;
 import ki.edu.agh.population.Individual;
+import ki.edu.agh.population.IndividualWithRealVectorPhenotype;
 import ki.edu.agh.population.Population;
 
 public class Utils {
@@ -102,8 +103,8 @@ public class Utils {
 	}
 
 	public static Individual createRandomIndividual(int dimension) {
-		return new Individual(new EuclideanSpacePhenotype(
-				generateRandomPoint(dimension)));
+		return new IndividualWithRealVectorPhenotype(
+				new EuclideanSpacePhenotype(generateRandomPoint(dimension)));
 	}
 
 	public static Population createRandomUniModalPopulation(int dimension,
@@ -113,7 +114,13 @@ public class Utils {
 		return createRandomPopulation(dimension, fitness, size);
 	}
 
-	public static DeteriorationFunction createGaussianForCluster(
+	/**
+	 * creates multidimensional Gaussian function for a given cluster of poins
+	 * 
+	 * @param cluster
+	 * @return
+	 */
+	public static Functor createGaussianForCluster(
 			Cluster<PointWithFitness> cluster) {
 		// TODO: implement
 		throw new RuntimeException("not implemented");

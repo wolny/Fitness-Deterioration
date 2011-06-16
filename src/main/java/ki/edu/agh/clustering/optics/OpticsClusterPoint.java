@@ -3,7 +3,8 @@ package ki.edu.agh.clustering.optics;
 import ki.edu.agh.clustering.ClusterPoint;
 import ki.edu.agh.point.MetricSpacePoint;
 
-public class OpticsClusterPoint<T> implements ClusterPoint<T>, MetricSpacePoint {
+public class OpticsClusterPoint<T extends MetricSpacePoint> implements
+		ClusterPoint<T>, MetricSpacePoint {
 	public static final double UNDEFINED = Double.MAX_VALUE;
 	public static final int NOISE = Integer.MAX_VALUE;
 
@@ -59,8 +60,7 @@ public class OpticsClusterPoint<T> implements ClusterPoint<T>, MetricSpacePoint 
 
 	@Override
 	public double getDistance(MetricSpacePoint point) {
-		MetricSpacePoint msp = (MetricSpacePoint) data;
-		return msp.getDistance(point);
+		return data.getDistance(point);
 	}
 
 	@Override

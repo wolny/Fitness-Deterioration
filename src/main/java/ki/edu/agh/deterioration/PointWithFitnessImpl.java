@@ -17,7 +17,7 @@ public class PointWithFitnessImpl implements PointWithFitness {
 	}
 
 	@Override
-	public double getFintess() {
+	public double getFitness() {
 		return fitness;
 	}
 
