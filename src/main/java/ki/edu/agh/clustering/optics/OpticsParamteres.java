@@ -6,6 +6,15 @@ public class OpticsParamteres implements ClusteringParameterSet {
 	private int minPoints;
 	private double epsilon;
 
+	public OpticsParamteres() {
+
+	}
+
+	public OpticsParamteres(int minPoints, double epsilon) {
+		this.minPoints = minPoints;
+		this.epsilon = epsilon;
+	}
+
 	public int getMinPoints() {
 		return minPoints;
 	}

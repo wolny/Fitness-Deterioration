@@ -7,12 +7,12 @@ import java.util.List;
 
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.clustering.ClusteringAlgorithm;
-import ki.edu.agh.clustering.ClusteringUtils;
 import ki.edu.agh.deterioration.FitnessDeterioration;
 import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.evolutionary.algorithm.EvolutionaryAlgorithm;
 import ki.edu.agh.fintess.FitnessFunction;
-import ki.edu.agh.population.IndividualWithRealVectorPhenotype;
+import ki.edu.agh.point.MetricSpacePoint;
+import ki.edu.agh.population.Individual;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -23,21 +23,9 @@ public class SequentialDeteriorationEA implements StopCriterion {
 	private static final Logger logger = Logger
 			.getLogger(SequentialDeteriorationEA.class);
 
-	private class ClusterChecker implements AlgorithmState {
-		private int clustersCount;
+	private ClusteringAlgorithm<MetricSpacePoint> clusteringAlgorithm;
 
-		public ClusterChecker(int clustersCount) {
-			this.clustersCount = clustersCount;
-		}
-
-		public int getClustersCount() {
-			return clustersCount;
-		}
-	}
-
-	private ClusteringAlgorithm<IndividualWithRealVectorPhenotype> clusteringAlgorithm;
-
-	private final List<Cluster<PointWithFitness>> clusters = new LinkedList<Cluster<PointWithFitness>>();
+	private final List<Cluster<? extends PointWithFitness>> clusters = new LinkedList<Cluster<? extends PointWithFitness>>();
 
 	private AlgorithmState currentState;
 
@@ -45,7 +33,17 @@ public class SequentialDeteriorationEA implements StopCriterion {
 
 	private FitnessDeterioration fitnessDeterioration;
 
-	public ClusteringAlgorithm<IndividualWithRealVectorPhenotype> getClusteringAlgorithm() {
+	private int iterationCount;
+
+	public int getIterationCount() {
+		return iterationCount;
+	}
+
+	public void setIterationCount(int iterationCount) {
+		this.iterationCount = iterationCount;
+	}
+
+	public ClusteringAlgorithm<MetricSpacePoint> getClusteringAlgorithm() {
 		return clusteringAlgorithm;
 	}
 
@@ -63,50 +61,67 @@ public class SequentialDeteriorationEA implements StopCriterion {
 
 	@Override
 	public boolean isDone(AlgorithmState state) {
-		ClusterChecker checker = (ClusterChecker) state;
-		return checker.getClustersCount() > 0;
+		throw new UnsupportedOperationException();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void run() {
 		logger.debug("initializing algorithm ...");
 
-		while (true) {
-			evolutionaryAlgorithm.execute();
-			IndividualWithRealVectorPhenotype[] lastGenerationIndividuals = (IndividualWithRealVectorPhenotype[]) evolutionaryAlgorithm
-					.getPopulation().getAllMembers();
+		while (getIterationCount() > 0) {
+			getEvolutionaryAlgorithm().execute();
+			List<? extends Individual> individuals = Arrays
+					.asList(getEvolutionaryAlgorithm().getPopulation()
+							.getAllMembers());
 
-			Collection<Cluster<IndividualWithRealVectorPhenotype>> opticsClusters = clusteringAlgorithm
-					.cluster(Arrays.asList(lastGenerationIndividuals));
+			getClusteringAlgorithm().setDataSet(
+					(Collection<MetricSpacePoint>) individuals);
 
-			setCurrentState(new ClusterChecker(opticsClusters.size()));
+			// TODO: sequential clustering
+			Collection<Cluster<MetricSpacePoint>> opticsClusters = getClusteringAlgorithm()
+					.cluster(null);
 
-			if (isDone(getCurrentState())) {
-				break;
-			} else {
-				// TODO: save best individuals from the last run
-				evolutionaryAlgorithm.extractBestIndividuals();
+			if (opticsClusters.size() == 0) {
+				// TODO: set terminationCriaterion
 			}
 
+			// TODO: save best individuals from the last run
+			saveBestIndividuals(getEvolutionaryAlgorithm()
+					.extractBestIndividuals());
+
 			// save clusters
-			Collection<Cluster<PointWithFitness>> clusterForDeterioration = ClusteringUtils
-					.convertClustersOfIndividuals(opticsClusters);
-			clusters.addAll(clusterForDeterioration);
+			for (Cluster<MetricSpacePoint> cluster : opticsClusters) {
+				getClusters()
+						.add((Cluster<? extends PointWithFitness>) cluster);
+			}
+			
 
 			FitnessFunction deterioratedFitness = fitnessDeterioration
 					.deteriorateFitness(
 							evolutionaryAlgorithm.getFitnessFunction(),
-							clusterForDeterioration);
+							getClusters());
 
 			// TODO: print fitness landscape
 
 			// set deteriorated fitness
 			evolutionaryAlgorithm.setFitnessFunction(deterioratedFitness);
+
+			iterationCount--;
 		}
 		// save results
 	}
 
+	public List<Cluster<? extends PointWithFitness>> getClusters() {
+		return clusters;
+	}
+
+	private void saveBestIndividuals(Individual[] extractBestIndividuals) {
+		// TODO Auto-generated method stub
+
+	}
+
 	public void setClusteringAlgorithm(
-			ClusteringAlgorithm<IndividualWithRealVectorPhenotype> clusteringAlgorithm) {
+			ClusteringAlgorithm<MetricSpacePoint> clusteringAlgorithm) {
 		this.clusteringAlgorithm = clusteringAlgorithm;
 	}
 

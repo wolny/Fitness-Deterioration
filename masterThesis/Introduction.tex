@@ -1,0 +1,45 @@
+
+\chapter{Introduction}
+\label{Introduction} 
+
+\begin{quotation}
+ It is impossible for any optimization algorithm to outperform random walks on all possible problems.
+\end{quotation}
+\begin{flushright}
+ ... a conclusion from No Free Lunch Theorem
+\end{flushright}
+
+\section{A statement of a problem}
+
+TODO: motivation of heuristics methods
+
+A Global Optimization Algorithm is defined as optimization algorithm that
+employs measures that prevent convergence to local
+optima and increase the probability of finding a global optimum. However,
+there are classes of problems in which
+instead of finding the global optimum we are interested in finding many
+local optimums whose basins of attraction are properly wide
+and deep.
+One way to achieve this goal is to perform several runs of a evolutionary
+algorithm and alter the fitness function in every subsequent runs of the
+algorithm
+in a way that prevents exploration of basins which were found in
+previous runs of the algorithm.
+This work tries to find an effective fitness deterioration technique in
+high-dimensional domain spaces by interpolating fitness landscape in the area of
+basin of attraction for further fitness deterioration. Very often fitness function is computationally intensive and in such case it
+is unacceptable to perform classical interpolation of the fitness function.
+Making the assumption that clusters of population obtained after the single
+run of the algorithm are good estimators of basins of attraction, it would
+be better to exploit spatial characteristics of clusters and approximate
+basins of attraction by multidimensional Gaussain functions performing
+only a few fitness evaluation. Our goal is to create efficient method for
+fitness deterioration using the above schema and to analyze the relation
+between the deterioration accuracy and reproduction operators (mutation,
+crossover, etc.).
+
+\section{Definition of terms}
+
+\section{Review of literature}
+TODO: sequential niching, prof. Obuchowicz works
+

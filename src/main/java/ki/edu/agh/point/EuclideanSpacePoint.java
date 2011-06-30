@@ -71,6 +71,14 @@ public class EuclideanSpacePoint implements MetricSpacePoint {
 		return new EuclideanSpacePoint(coords);
 	}
 
+	public EuclideanSpacePoint multiply(double v) {
+		double[] coords = new double[dimension];
+		for (int i = 0; i < dimension; i++) {
+			coords[i] = coordinates[i] * v;
+		}
+		return new EuclideanSpacePoint(coords);
+	}
+
 	/**
 	 * 
 	 * @return dot product p*p

@@ -121,7 +121,7 @@ public class Utils {
 	 * @return
 	 */
 	public static Functor createGaussianForCluster(
-			Cluster<PointWithFitness> cluster) {
+			Cluster<? extends PointWithFitness> cluster) {
 		// TODO: implement
 		throw new RuntimeException("not implemented");
 	}

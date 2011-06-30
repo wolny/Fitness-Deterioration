@@ -3,7 +3,9 @@ package ki.edu.agh.print;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 
+import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.Population;
 import ki.edu.agh.statistics.Utils;
@@ -26,6 +28,23 @@ public class PrintUtils {
 			out.close();
 		}
 	}
+
+	public static void writePoints(String fileName,
+			Collection<EuclideanSpacePoint> points) throws IOException {
+		BufferedOutputStream out = new BufferedOutputStream(
+				new FileOutputStream(DIAGRAM_DIR + "/" + fileName));
+		try {
+			StringBuilder sb = new StringBuilder();
+			for (EuclideanSpacePoint point : points) {
+				sb.append(point + "\n");
+			}
+			byte[] bytes = sb.toString().getBytes();
+			out.write(bytes);
+		} finally {
+			out.close();
+		}
+	}
+	
 
 	public static void main(String[] args) throws IOException {
 		Population population = Utils.createRandomUniModalPopulation(2, 10);

@@ -24,7 +24,7 @@ public abstract class AbstractFitnessDeterioration implements
 	 */
 	@Override
 	public FitnessFunction deteriorateFitness(FitnessFunction currentFitness,
-			Collection<Cluster<PointWithFitness>> clusters) {
+			Collection<Cluster<? extends PointWithFitness>> clusters) {
 
 		if (clusters == null || clusters.size() == 0) {
 			return currentFitness;
@@ -33,7 +33,7 @@ public abstract class AbstractFitnessDeterioration implements
 		Collection<Functor> crunchingFunctions = new ArrayList<Functor>(
 				clusters.size());
 
-		for (Cluster<PointWithFitness> cluster : clusters) {
+		for (Cluster<? extends PointWithFitness> cluster : clusters) {
 			crunchingFunctions.add(createCrunchingFunctorForCluster(cluster));
 		}
 
@@ -59,6 +59,6 @@ public abstract class AbstractFitnessDeterioration implements
 	 * @return
 	 */
 	public abstract Functor createCrunchingFunctorForCluster(
-			Cluster<PointWithFitness> cluster);
+			Cluster<? extends PointWithFitness> cluster);
 
 }

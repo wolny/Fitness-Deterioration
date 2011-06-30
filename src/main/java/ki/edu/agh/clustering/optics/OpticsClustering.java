@@ -1,83 +1,102 @@
 package ki.edu.agh.clustering.optics;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ki.edu.agh.clustering.Cluster;
-import ki.edu.agh.clustering.ClusteringAlgorithm;
 import ki.edu.agh.clustering.ClusteringParameterSet;
+import ki.edu.agh.deterioration.PointWithFitness;
+import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.point.MetricSpacePoint;
-import ki.edu.agh.point.MetricSpaceUtils;
+import ki.edu.agh.print.PrintUtils;
 
-public class OpticsClustering<T extends MetricSpacePoint> implements
-		ClusteringAlgorithm<T> {
-	private double epsilon;
-	private int minPoints;
-	private boolean configured;
+public class OpticsClustering<T extends MetricSpacePoint> extends
+		AbstractOpticsClustering<T> {
 
-	public void setConfigured(boolean configured) {
-		this.configured = configured;
-	}
-
-	public boolean isConfigured() {
-		return configured;
-	}
-
-	// we have to preserve order of points so list will suffice
-	private List<OpticsClusterPoint<T>> setOfObjects;
-
-	@Override
-	public Collection<Cluster<T>> cluster(Collection<T> objectsToBeClustered) {
-		if (!isConfigured()) {
-			throw new IllegalStateException(
-					"OPTICS algorithm has not been configured");
-		}
-		// clear optics algorithm state
-		createSetOfObjects(objectsToBeClustered);
-		return null;
-	}
-
-	private void createSetOfObjects(Collection<T> objectsToBeClustered) {
-		setOfObjects = new ArrayList<OpticsClusterPoint<T>>(
-				objectsToBeClustered.size());
-		for (T object : objectsToBeClustered) {
-			setOfObjects.add(new OpticsClusterPoint<T>(object));
-		}
-	}
-
-	public double getEpsilon() {
-		return epsilon;
-	}
-
-	@SuppressWarnings("unchecked")
-	public Collection<OpticsClusterPoint<T>> getEpsilonNeighbor(
-			OpticsClusterPoint<T> point, double epsilon) {
-		return (Collection<OpticsClusterPoint<T>>) MetricSpaceUtils
-				.getEpsilonNeighbor(point, setOfObjects, epsilon);
-	}
-
-	public int getMinPoints() {
-		return minPoints;
-	}
-
-	public List<OpticsClusterPoint<T>> getSetOfObjects() {
-		return setOfObjects;
+	public OpticsClustering(OpticsParamteres opticsParameters) {
+		super(opticsParameters);
 	}
 
 	@Override
-	public void setClusteringParameterSet(ClusteringParameterSet parameters) {
-		OpticsParamteres opticsParamters = (OpticsParamteres) parameters;
-		setMinPoints(opticsParamters.getMinPoints());
-		setEpsilon(opticsParamters.getEpsilon());
-		setConfigured(true);
+	public Collection<Cluster<T>> cluster(
+			ClusteringParameterSet clusteringParameterSet) {
+		OpticsParamteres opticsParameters = (OpticsParamteres) clusteringParameterSet;
+		if (opticsParameters.getEpsilon() > getEpsilon()) {
+			throw new RuntimeException(
+					"Epsilon parameter must be lower than generating distance.");
+		}
+		extractDBSCANClustering(opticsParameters.getEpsilon());
+
+		Map<Integer, Cluster<T>> clusterMap = getClusterMap();
+		Collection<Cluster<T>> clusters = clusterMap.values();
+		// print clusters
+		printClusters(clusters);
+
+		return clusters;
 	}
 
-	public void setEpsilon(double epsilon) {
-		this.epsilon = epsilon;
+	private void printClusters(Collection<Cluster<T>> clusters) {
+		String prefix = "cluster";
+		int i = 0;
+		for (Cluster<T> cluster : clusters) {
+			List<EuclideanSpacePoint> points = new ArrayList<EuclideanSpacePoint>(
+					cluster.getSize());
+			for (T cPoint : cluster.getClusterPoints()) {
+				EuclideanSpacePoint p = null;
+				if (cPoint instanceof PointWithFitness) {
+					p = ((PointWithFitness) cPoint).getPoint();
+				} else if (cPoint instanceof EuclideanSpacePoint) {
+					p = (EuclideanSpacePoint) cPoint;
+				} else {
+					logger.error("unsupported point class: "
+							+ cPoint.getClass().getName());
+				}
+				points.add(p);
+			}
+			try {
+				PrintUtils.writePoints(prefix + i++, points);
+			} catch (IOException e) {
+				logger.warn("Cannot print clusters", e);
+			}
+		}
 	}
 
-	public void setMinPoints(int minPoints) {
-		this.minPoints = minPoints;
+	private Map<Integer, Cluster<T>> getClusterMap() {
+		Map<Integer, Cluster<T>> clusterMap = new HashMap<Integer, Cluster<T>>();
+		for (OpticsClusterPoint<T> oPoint : getOpticsOrdering()) {
+			int clusterId = oPoint.getClusterId();
+			if (clusterId == OpticsClusterPoint.NOISE) {
+				continue;
+			}
+
+			Cluster<T> cluster = clusterMap.get(clusterId);
+			if (cluster == null) {
+				clusterMap.put(clusterId, cluster = new OpticsCluster<T>());
+			}
+			cluster.addClusterPoint(oPoint.getData());
+		}
+		return clusterMap;
 	}
+
+	private void extractDBSCANClustering(double eps) {
+		int clusterId = OpticsClusterPoint.NOISE;
+		for (OpticsClusterPoint<T> oPoint : getOpticsOrdering()) {
+			if (oPoint.getReachabilityDistance() > eps) {
+				// undefined > epsilon
+				if (oPoint.getCoreDistance() <= eps) {
+					// create new cluster
+					oPoint.setClusterId(++clusterId);
+				} else {
+					oPoint.setClusterId(OpticsClusterPoint.NOISE);
+				}
+			} else { // oPoint.reachabilityDistance <= eps
+				oPoint.setClusterId(clusterId);
+			}
+		}
+	}
+
 }

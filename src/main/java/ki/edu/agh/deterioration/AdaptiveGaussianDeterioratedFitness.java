@@ -10,7 +10,7 @@ import ki.edu.agh.functors.Functor;
 public class AdaptiveGaussianDeterioratedFitness extends
 		AbstractFitnessDeterioration {
 
-	private List<Cluster<PointWithFitness>> clusters;
+	private List<Cluster<? extends PointWithFitness>> clusters;
 
 	@Override
 	public FitnessFunction createDeterioratedFitness(
@@ -23,7 +23,7 @@ public class AdaptiveGaussianDeterioratedFitness extends
 	// TODO: test wiht mockito and cgLib
 	@Override
 	public Functor createCrunchingFunctorForCluster(
-			Cluster<PointWithFitness> cluster) {
+			Cluster<? extends PointWithFitness> cluster) {
 		// TODO Auto-generated method stub
 		// we need information about clusters for fitness computation
 		clusters.add(cluster);

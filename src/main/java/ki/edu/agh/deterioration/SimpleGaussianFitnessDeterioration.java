@@ -54,7 +54,7 @@ public class SimpleGaussianFitnessDeterioration extends
 
 	@Override
 	public Functor createCrunchingFunctorForCluster(
-			Cluster<PointWithFitness> cluster) {
+			Cluster<? extends PointWithFitness> cluster) {
 		return Utils.createGaussianForCluster(cluster);
 	}
 }

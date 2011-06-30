@@ -30,14 +30,14 @@ public class SimpleGaussianFitnessDeteriorationTest {
 
 	private int clustersCount = 5;
 
-	private Collection<Cluster<PointWithFitness>> clusters;
+	private Collection<Cluster<? extends PointWithFitness>> clusters;
 
 	private class MyFitnessDeterioration extends
 			SimpleGaussianFitnessDeterioration {
 
 		@Override
 		public Functor createCrunchingFunctorForCluster(
-				Cluster<PointWithFitness> cluster) {
+				Cluster<? extends PointWithFitness> cluster) {
 			return crunchingFunctor;
 		}
 
@@ -58,21 +58,22 @@ public class SimpleGaussianFitnessDeteriorationTest {
 		MyFitnessDeterioration fitnessDeterioration = Mockito
 				.spy(new MyFitnessDeterioration());
 
-		FitnessFunction deterioratedFitness = fitnessDeterioration.deteriorateFitness(
-				fitness, clusters);
+		FitnessFunction deterioratedFitness = fitnessDeterioration
+				.deteriorateFitness(fitness, clusters);
 
-		double value = deterioratedFitness.computeFitness(new EuclideanSpacePhenotype(null));
-		Assert.assertEquals(fitnessValue + clustersCount * functorValue,
-				value);
+		double value = deterioratedFitness
+				.computeFitness(new EuclideanSpacePhenotype(null));
+		Assert.assertEquals(fitnessValue + clustersCount * functorValue, value);
 
 	}
 
 	@Before
 	public void init() {
-		clusters = new ArrayList<Cluster<PointWithFitness>>(clustersCount);
+		clusters = new ArrayList<Cluster<? extends PointWithFitness>>(
+				clustersCount);
 		for (int i = 0; i < clustersCount; i++) {
 			@SuppressWarnings("unchecked")
-			Cluster<PointWithFitness> cluster = mock(Cluster.class);
+			Cluster<? extends PointWithFitness> cluster = mock(Cluster.class);
 			clusters.add(cluster);
 		}
 	}

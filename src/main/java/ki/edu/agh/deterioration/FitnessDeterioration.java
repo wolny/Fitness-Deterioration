@@ -16,5 +16,5 @@ public interface FitnessDeterioration {
 	 * @return
 	 */
 	FitnessFunction deteriorateFitness(FitnessFunction currentFitness,
-			Collection<Cluster<PointWithFitness>> clusters);
+			Collection<Cluster<? extends PointWithFitness>> clusters);
 }

@@ -5,8 +5,10 @@ import ki.edu.agh.point.MetricSpacePoint;
 
 public class OpticsClusterPoint<T extends MetricSpacePoint> implements
 		ClusterPoint<T>, MetricSpacePoint {
-	public static final double UNDEFINED = Double.MAX_VALUE;
-	public static final int NOISE = Integer.MAX_VALUE;
+	// TODO: set undefined value to be 2*epsilon, no to degenerate
+	// reachability-plot or consider logaritmic scale
+	public static double UNDEFINED = Double.MAX_VALUE;
+	public static final int NOISE = 0;
 
 	private boolean processed;
 	private int clusterId;
@@ -19,6 +21,7 @@ public class OpticsClusterPoint<T extends MetricSpacePoint> implements
 		this.processed = false;
 		this.coreDistance = UNDEFINED;
 		this.reachabilityDistance = UNDEFINED;
+		this.clusterId = NOISE;
 	}
 
 	@Override

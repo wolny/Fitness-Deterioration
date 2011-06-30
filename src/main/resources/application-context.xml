@@ -4,16 +4,17 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 	<bean id="algorithm" class="ki.edu.agh.algorithm.SequentialDeteriorationEA">
+		<property name="iterationCount" value="20" />
 		<!-- clustering algorithm -->
 		<property name="clusteringAlgorithm">
 			<bean class="ki.edu.agh.clustering.optics.OpticsClustering">
-				<property name="clusteringParameterSet">
+				<constructor-arg>
 					<bean class="ki.edu.agh.clustering.optics.OpticsParamteres">
 						<property name="minPoints" value="10" />
 						<!-- problem's domain dependent -->
 						<property name="epsilon" value="1.0" />
 					</bean>
-				</property>
+				</constructor-arg>
 			</bean>
 		</property>
 
