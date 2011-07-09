@@ -3,6 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:algorithm.properties" />
+	</bean>
+
 	<bean id="algorithm" class="ki.edu.agh.algorithm.SequentialDeteriorationEA">
 		<property name="iterationCount" value="20" />
 		<!-- clustering algorithm -->
@@ -10,36 +15,44 @@
 			<bean class="ki.edu.agh.clustering.optics.OpticsClustering">
 				<constructor-arg>
 					<bean class="ki.edu.agh.clustering.optics.OpticsParamteres">
-						<property name="minPoints" value="10" />
+						<property name="minPoints" value="${optics.min_pts}" />
 						<!-- problem's domain dependent -->
-						<property name="epsilon" value="1.0" />
+						<property name="epsilon" value="${optics.eps}" />
 					</bean>
 				</constructor-arg>
 			</bean>
 		</property>
 
 		<!-- evolutionary algorithm -->
-		<property name="evolutionaryAlgorithm">
-			<bean class="ki.edu.agh.evolutionary.algorithm.RealValueGeneticAlgorithm">
-				<property name="fitnessFunction">
-					<bean class="ki.edu.agh.fintess.RobustFitnessFunction">
-						<constructor-arg>
-							<bean class="ki.edu.agh.fintess.StandardFitnessFunction">
-								<constructor-arg>
-									<bean class="ki.edu.agh.functors.UniModalFunction" />
-								</constructor-arg>
-							</bean>
-						</constructor-arg>
-					</bean>
-				</property>
+		<!--<property name="evolutionaryAlgorithm"> <bean class="ki.edu.agh.evolutionary.algorithm.RealValueGeneticAlgorithm"> 
+			<property name="fitnessFunction"> <bean class="ki.edu.agh.fintess.RobustFitnessFunction"> 
+			<constructor-arg> <bean class="ki.edu.agh.fintess.StandardFitnessFunction"> 
+			<constructor-arg> <bean class="ki.edu.agh.functors.UniModalFunction" /> </constructor-arg> 
+			</bean> </constructor-arg> </bean> </property> </bean> </property> -->
 
-				<!-- TODO: set remainig properties -->
-			</bean>
-		</property>
+		<property name="evolutionaryAlgorithm" ref="fake" />			
 
 		<!-- fitness deterioration algorithm -->
 		<property name="fitnessDeterioration">
 			<bean class="ki.edu.agh.deterioration.SimpleGaussianFitnessDeterioration" />
+		</property>
+	</bean>
+
+	<bean id="fake" class="ki.edu.agh.fakes.FakeEA">
+		<property name="clusterSize" value="20" />
+		<property name="standardDev" value="0.2" />
+		<property name="functor">
+			<bean class="ki.edu.agh.functors.UniModalFunction" />
+		</property>
+		<property name="clusterCenters">
+			<list>
+				<bean class="ki.edu.agh.fakes.Coords2D">
+					<!-- x -->
+					<constructor-arg value="0.0" />
+					<!-- y -->
+					<constructor-arg value="0.0" />
+				</bean>
+			</list>
 		</property>
 	</bean>
 </beans>

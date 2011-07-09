@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import ki.edu.agh.population.Individual;
-import ki.edu.agh.population.IndividualComparator;
+import ki.edu.agh.population.MinimizationIndividualComparator;
 import ki.edu.agh.population.Population;
 import ki.edu.agh.statistics.Utils;
 
@@ -67,7 +67,7 @@ public class OrderedSelection implements SelectionAlgorithm {
 		System.out.println();
 		OrderedSelection selection = new OrderedSelection(6);
 		Individual[] mate = selection.select(pop, 100);
-		Arrays.sort(mate, new IndividualComparator());
+		Arrays.sort(mate, new MinimizationIndividualComparator());
 		for (Individual i : mate) {
 			System.out.println(i);
 		}

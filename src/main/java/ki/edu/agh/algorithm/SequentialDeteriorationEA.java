@@ -1,5 +1,6 @@
 package ki.edu.agh.algorithm;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -13,6 +14,8 @@ import ki.edu.agh.evolutionary.algorithm.EvolutionaryAlgorithm;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.point.MetricSpacePoint;
 import ki.edu.agh.population.Individual;
+import ki.edu.agh.print.PrintUtils;
+import ki.edu.agh.problem.ProblemDomain;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +25,10 @@ public class SequentialDeteriorationEA implements StopCriterion {
 
 	private static final Logger logger = Logger
 			.getLogger(SequentialDeteriorationEA.class);
+
+	private static final int DEF_NUM_OF_NODES = 200;
+
+	private ProblemDomain problemDomain;
 
 	private ClusteringAlgorithm<MetricSpacePoint> clusteringAlgorithm;
 
@@ -34,6 +41,14 @@ public class SequentialDeteriorationEA implements StopCriterion {
 	private FitnessDeterioration fitnessDeterioration;
 
 	private int iterationCount;
+
+	public ProblemDomain getProblemDomain() {
+		return problemDomain;
+	}
+
+	public void setProblemDomain(ProblemDomain problemDomain) {
+		this.problemDomain = problemDomain;
+	}
 
 	public int getIterationCount() {
 		return iterationCount;
@@ -65,9 +80,10 @@ public class SequentialDeteriorationEA implements StopCriterion {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void run() {
+	public void run() throws IOException {
 		logger.debug("initializing algorithm ...");
 
+		int currentIteration = 1;
 		while (getIterationCount() > 0) {
 			getEvolutionaryAlgorithm().execute();
 			List<? extends Individual> individuals = Arrays
@@ -94,7 +110,6 @@ public class SequentialDeteriorationEA implements StopCriterion {
 				getClusters()
 						.add((Cluster<? extends PointWithFitness>) cluster);
 			}
-			
 
 			FitnessFunction deterioratedFitness = fitnessDeterioration
 					.deteriorateFitness(
@@ -102,6 +117,9 @@ public class SequentialDeteriorationEA implements StopCriterion {
 							getClusters());
 
 			// TODO: print fitness landscape
+			// TODO: specify problem domain
+			PrintUtils.writeProblemPoints("fitnessLand" + currentIteration++,
+					getProblemDomain(), DEF_NUM_OF_NODES);
 
 			// set deteriorated fitness
 			evolutionaryAlgorithm.setFitnessFunction(deterioratedFitness);

@@ -1,18 +1,36 @@
 package ki.edu.agh.population;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 
 public class FixedSizePopulation implements Population {
 
 	private int currentSize;
-	private Individual[] individuals;
 	private int populationSizeLimit;
+	private final Individual[] individuals;
+	private final Comparator<Individual> individualComparator;
 
 	public FixedSizePopulation(int populationSizeLimit) {
 		this.populationSizeLimit = populationSizeLimit;
 		this.individuals = new Individual[populationSizeLimit];
 		this.currentSize = 0;
+		this.individualComparator = new MinimizationIndividualComparator();
+	}
+
+	public FixedSizePopulation(int populationSizeLimit,
+			Comparator<Individual> individualComparator) {
+		this.populationSizeLimit = populationSizeLimit;
+		this.individuals = new Individual[populationSizeLimit];
+		this.currentSize = 0;
+		this.individualComparator = individualComparator;
+	}
+
+	public FixedSizePopulation(Individual[] individuals,
+			Comparator<Individual> individualComparator) {
+		this.individuals = individuals;
+		this.individualComparator = individualComparator;
+		currentSize = populationSizeLimit = individuals.length;
 	}
 
 	@Override
@@ -70,7 +88,7 @@ public class FixedSizePopulation implements Population {
 
 	@Override
 	public void sortMembers() {
-		Arrays.sort(individuals, 0, getSize(), new IndividualComparator());
+		Arrays.sort(individuals, 0, getSize(), individualComparator);
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import java.util.List;
 import junit.framework.Assert;
 import ki.edu.agh.population.FixedSizePopulation;
 import ki.edu.agh.population.Individual;
-import ki.edu.agh.population.IndividualComparator;
+import ki.edu.agh.population.MinimizationIndividualComparator;
 import ki.edu.agh.population.Population;
 import ki.edu.agh.statistics.Utils;
 
@@ -18,7 +18,7 @@ public class PopulationTest {
 
 	private Population population;
 	private int size = 10;
-	private Comparator<Individual> comparator = new IndividualComparator();
+	private Comparator<Individual> comparator = new MinimizationIndividualComparator();
 
 	private boolean isSorted(Population population) {
 		if (population.getSize() <= 1) {

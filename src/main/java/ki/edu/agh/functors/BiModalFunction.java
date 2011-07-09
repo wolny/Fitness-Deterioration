@@ -18,7 +18,7 @@ public class BiModalFunction implements Functor {
 			sqrSum1 += coord * coord;
 		}
 
-		return Math.exp(-sqrSum) + Math.exp(-sqrSum1);
+		return Math.exp(-sqrSum) + 1.4*Math.exp(-sqrSum1);
 	}
 
 }

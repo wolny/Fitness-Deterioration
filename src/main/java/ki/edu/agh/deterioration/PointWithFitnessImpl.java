@@ -21,4 +21,9 @@ public class PointWithFitnessImpl implements PointWithFitness {
 		return fitness;
 	}
 
+	@Override
+	public String toString() {
+		return point + "	" + fitness;
+	}
+
 }
