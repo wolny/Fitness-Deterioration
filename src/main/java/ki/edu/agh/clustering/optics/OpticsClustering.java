@@ -33,6 +33,7 @@ public class OpticsClustering<T extends MetricSpacePoint> extends
 
 		Map<Integer, Cluster<T>> clusterMap = getClusterMap();
 		Collection<Cluster<T>> clusters = clusterMap.values();
+		logger.info("cluster count: " + clusters.size());
 		// print clusters
 		printClusters(clusters);
 
@@ -83,6 +84,9 @@ public class OpticsClustering<T extends MetricSpacePoint> extends
 	}
 
 	private void extractDBSCANClustering(double eps) {
+		logger.info("Extraction DBSCAN density clusters whith paramters: epsilon = "
+				+ eps + " minPts = " + getMinPoints());
+
 		int clusterId = OpticsClusterPoint.NOISE;
 		for (OpticsClusterPoint<T> oPoint : getOpticsOrdering()) {
 			if (oPoint.getReachabilityDistance() > eps) {
@@ -98,5 +102,4 @@ public class OpticsClustering<T extends MetricSpacePoint> extends
 			}
 		}
 	}
-
 }

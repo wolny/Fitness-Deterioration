@@ -7,4 +7,5 @@ public interface ProblemDomain {
 	Functor getFunctor();
 	Domain getDomain();
 	FitnessFunction getFitnessFunction();
+	void setFitnessFunction(FitnessFunction fitnessFunction);
 }

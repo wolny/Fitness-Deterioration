@@ -20,12 +20,12 @@
 								<!-- first dimension interval -->
 								<bean class="ki.edu.agh.problem.Interval">
 									<constructor-arg value="-2." />
-									<constructor-arg value="2." />
+									<constructor-arg value="4." />
 								</bean>
 								<!-- second dimension interval -->
 								<bean class="ki.edu.agh.problem.Interval">
 									<constructor-arg value="-2." />
-									<constructor-arg value="2." />
+									<constructor-arg value="4." />
 								</bean>
 							</list>
 						</property>
@@ -35,7 +35,7 @@
 					<bean class="ki.edu.agh.fintess.StandardFitnessFunction">
 						<!-- TODO: change it to test different multimodal functions -->
 						<constructor-arg>
-							<bean class="ki.edu.agh.functors.UniModalFunction" />
+							<bean class="ki.edu.agh.functors.BiModalFunction" />
 						</constructor-arg>
 					</bean>
 				</property>
@@ -77,10 +77,11 @@
 
 	<bean id="fake" class="ki.edu.agh.fakes.FakeEA">
 		<property name="clusterSize" value="30" />
-		<!-- in real algorithm standardDev should be correlated with stdDev of the recombination operation -->
+		<!-- in real algorithm standardDev should be correlated with stdDev of 
+			the recombination operation -->
 		<property name="standardDev" value="0.3" />
 		<property name="functor">
-			<bean class="ki.edu.agh.functors.UniModalFunction" />
+			<bean class="ki.edu.agh.functors.BiModalFunction" />
 		</property>
 		<property name="clusterCenters">
 			<list>
@@ -90,7 +91,14 @@
 					<!-- y -->
 					<constructor-arg value="0.0" />
 				</bean>
+				<bean class="ki.edu.agh.fakes.Coords2D">
+					<!-- x -->
+					<constructor-arg value="1.7" />
+					<!-- y -->
+					<constructor-arg value="1.7" />
+				</bean>
 			</list>
 		</property>
 	</bean>
 </beans>
+

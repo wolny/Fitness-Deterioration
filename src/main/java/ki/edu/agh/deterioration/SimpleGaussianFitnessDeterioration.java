@@ -34,10 +34,13 @@ public class SimpleGaussianFitnessDeterioration extends
 		//
 		@Override
 		public double computeFitness(Phenotype phenotype) {
+			double sign = isMinimization() ? 1 : -1;
 			double sum = fitness.computeFitness(phenotype);
 			for (Functor crunchingFunctor : crunchingFunctions) {
-				sum += crunchingFunctor.getValue(((EuclideanSpacePhenotype) phenotype)
-						.getPoint());
+				sum += sign
+						* crunchingFunctor
+								.getValue(((EuclideanSpacePhenotype) phenotype)
+										.getPoint());
 			}
 			return sum;
 		}
@@ -52,9 +55,11 @@ public class SimpleGaussianFitnessDeterioration extends
 				crunchingFunctions);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Functor createCrunchingFunctorForCluster(
 			Cluster<? extends PointWithFitness> cluster) {
-		return Utils.createGaussianForCluster(cluster);
+		return Utils.createGaussianForCluster(
+				(Cluster<PointWithFitness>) cluster, getComparator());
 	}
 }

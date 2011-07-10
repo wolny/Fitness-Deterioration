@@ -157,8 +157,14 @@ public abstract class AbstractOpticsClustering<T extends MetricSpacePoint>
 		return neighbors.get(getMinPoints() - 1).getDistance();
 	}
 
+	/**
+	 * sets set of objects to be clustered, creates orderedSeeds queue and
+	 * crates OPTICS ordering
+	 */
 	@Override
 	public void setDataSet(Collection<T> dataSet) {
+		logger.debug("initilizing OPTICS algorithm ...");
+
 		setOfObjects = new ArrayList<OpticsClusterPoint<T>>(dataSet.size());
 		for (T object : dataSet) {
 			setOfObjects.add(new OpticsClusterPoint<T>(object));
@@ -166,6 +172,8 @@ public abstract class AbstractOpticsClustering<T extends MetricSpacePoint>
 
 		opticsOrdering = new ArrayList<OpticsClusterPoint<T>>(
 				setOfObjects.size());
+
+		logger.debug("initializing OrderedSeeds ...");
 
 		orderedSeeds = new PriorityQueue<OpticsClusterPoint<T>>(
 				setOfObjects.size(), new Comparator<OpticsClusterPoint<T>>() {
@@ -212,6 +220,7 @@ public abstract class AbstractOpticsClustering<T extends MetricSpacePoint>
 	}
 
 	protected void performOPTICS() {
+		logger.debug("creating OPTICS ordering ...");
 		for (OpticsClusterPoint<T> oPoint : getSetOfObjects()) {
 			if (!oPoint.isProcessed()) {
 				expandClusterOrder(oPoint);

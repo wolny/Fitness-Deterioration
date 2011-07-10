@@ -1,12 +1,17 @@
 package ki.edu.agh.point;
 
+import java.io.Serializable;
+
 /**
  * General class which represents point in a multidimensional space. Generic
  * algorithm must apply to all numeric data types not only to Double
  * 
  * @author slo
  */
-public class EuclideanSpacePoint implements MetricSpacePoint {
+public class EuclideanSpacePoint implements MetricSpacePoint, Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	private double[] coordinates;
 	private int dimension;
 

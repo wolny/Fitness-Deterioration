@@ -1,17 +1,21 @@
 package ki.edu.agh.statistics;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import ki.edu.agh.clustering.optics.OpticsClustering;
+import ki.edu.agh.clustering.optics.OpticsParamteres;
 import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.deterioration.PointWithFitnessImpl;
 import ki.edu.agh.fintess.FitnessFunction;
-import ki.edu.agh.fintess.StandardFitnessFunction;
-import ki.edu.agh.functors.BiModalFunction;
 import ki.edu.agh.functors.Functor;
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.EuclideanSpacePhenotype;
@@ -20,10 +24,11 @@ import ki.edu.agh.population.Population;
 import ki.edu.agh.print.PrintUtils;
 import ki.edu.agh.problem.Domain;
 import ki.edu.agh.problem.Interval;
-import ki.edu.agh.problem.MultimodalRealSpaceProblem;
 import ki.edu.agh.problem.ProblemDomain;
 
 public class PointGenerator {
+
+	private static final String DATA_SET = "dataSet";
 
 	public static Collection<EuclideanSpacePoint> generateUniformCircle2D(
 			EuclideanSpacePoint center, double radius, int count) {
@@ -185,28 +190,21 @@ public class PointGenerator {
 	}
 
 	public static void main(String[] args) throws IOException {
-		// Collection<EuclideanSpacePoint> points = generateUniformCircle2D(
-		// new EuclideanSpacePoint(new double[] { 0., 0. }), 3., 600);
-		//
-		// Collection<EuclideanSpacePoint> points1 = generateGaussianPoints2D(
-		// new EuclideanSpacePoint(new double[] { -1., 1. }), 0.2, 200);
-		//
-		// Collection<EuclideanSpacePoint> points2 = generateGaussianPoints2D(
-		// new EuclideanSpacePoint(new double[] { 1., -1. }), 0.2, 200);
-		//
-		// points.addAll(points1);
-		// points.addAll(points2);
-		// PrintUtils.writePoints("circle", points);
-		//
-		// double epsilon = 1.2;
-		// int minPoints = 10;
-		// OpticsClustering<EuclideanSpacePoint> optics = new
-		// OpticsClustering<EuclideanSpacePoint>(
-		// new OpticsParamteres(minPoints, epsilon));
-		// optics.setDataSet(points);
-		// Collection<Cluster<EuclideanSpacePoint>> clusters = optics
-		// .cluster(new OpticsParamteres(minPoints, 0.1));
+		// Collection<EuclideanSpacePoint> points = createDataSet1();
+		// writePoints(DATA_SET, points);
 
+		Collection<EuclideanSpacePoint> points = readPoints(DATA_SET);
+
+		PrintUtils.writePoints("cluster", points);
+		// PrintUtils.writePoints("circle", points);
+
+		double epsilon = 0.5;
+		int minPoints = 20;
+		OpticsClustering<EuclideanSpacePoint> optics = new OpticsClustering<EuclideanSpacePoint>(
+				new OpticsParamteres(minPoints, epsilon));
+		optics.setDataSet(points);
+		// optics.cluster(new OpticsParamteres(minPoints, 0.1));
+		//
 		// String prefix = "cluster";
 		// int i = 0;
 		// for (Cluster<EuclideanSpacePoint> cluster : clusters) {
@@ -228,17 +226,58 @@ public class PointGenerator {
 		// System.out.println(point);
 		// }
 
-		Domain domain = new Domain();
-		int dim = 2;
-		int numOfNodes = 160;
-		List<Interval> cube = new ArrayList<Interval>(dim);
-		for (int i = 0; i < dim; i++) {
-			cube.add(new Interval(-2., 4.));
-		}
-		domain.setMultidimensionalCube(cube);
+		// Domain domain = new Domain();
+		// int dim = 2;
+		// int numOfNodes = 160;
+		// List<Interval> cube = new ArrayList<Interval>(dim);
+		// for (int i = 0; i < dim; i++) {
+		// cube.add(new Interval(-2., 4.));
+		// }
+		// domain.setMultidimensionalCube(cube);
+		//
+		// PrintUtils.writeProblemPoints("pwf", new MultimodalRealSpaceProblem(
+		// domain, new StandardFitnessFunction(new BiModalFunction())),
+		// numOfNodes);
+	}
 
-		PrintUtils.writeProblemPoints("pwf", new MultimodalRealSpaceProblem(
-				domain, new StandardFitnessFunction(new BiModalFunction())),
-				numOfNodes);
+	public static Collection<EuclideanSpacePoint> createDataSet1() {
+		Collection<EuclideanSpacePoint> points = generateUniformCircle2D(
+				new EuclideanSpacePoint(new double[] { 0., 0. }), 3., 600);
+
+		Collection<EuclideanSpacePoint> points1 = generateGaussianPoints2D(
+				new EuclideanSpacePoint(new double[] { -1., 1. }), 0.2, 200);
+
+		Collection<EuclideanSpacePoint> points2 = generateGaussianPoints2D(
+				new EuclideanSpacePoint(new double[] { 1., -1. }), 0.2, 200);
+
+		points.addAll(points1);
+		points.addAll(points2);
+		return points;
+	}
+
+	public static void writePoints(String fileName,
+			Collection<EuclideanSpacePoint> points) {
+		try {
+			FileOutputStream fos = new FileOutputStream(fileName);
+			ObjectOutputStream out = new ObjectOutputStream(fos);
+			out.writeObject(points);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Collection<EuclideanSpacePoint> readPoints(String fileName)
+			throws IOException {
+		Collection<EuclideanSpacePoint> result = null;
+		try {
+			FileInputStream fis = new FileInputStream(fileName);
+			ObjectInputStream in = new ObjectInputStream(fis);
+			result = (Collection<EuclideanSpacePoint>) in.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

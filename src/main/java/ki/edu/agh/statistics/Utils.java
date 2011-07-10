@@ -3,13 +3,19 @@ package ki.edu.agh.statistics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
+
+import org.apache.log4j.Logger;
 
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.fintess.StandardFitnessFunction;
 import ki.edu.agh.functors.Functor;
+import ki.edu.agh.functors.MultivariateGaussianFunctor;
 import ki.edu.agh.functors.UniModalFunction;
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.EuclideanSpacePhenotype;
@@ -17,9 +23,41 @@ import ki.edu.agh.population.FixedSizePopulation;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.IndividualWithRealVectorPhenotype;
 import ki.edu.agh.population.Population;
+import Jama.EigenvalueDecomposition;
+import Jama.Matrix;
 
 public class Utils {
 	private static Random rand = new Random();
+	private static final Logger logger = Logger.getLogger(Utils.class);
+
+	/**
+	 * Sample covariance matrices are extremely sensitive to outliers, that is
+	 * why we try to extract clusters which are as convex as possible
+	 * 
+	 * an unbiased estimator
+	 * 
+	 * @param cluster
+	 * @return
+	 */
+	public static Matrix estimateCovarianceMatix(int dimension,
+			EuclideanSpacePoint meanPoint,
+			Collection<EuclideanSpacePoint> points) {
+
+		int N = points.size();
+		double Q[][] = new double[dimension][dimension];
+
+		for (int i = 0; i < dimension; i++) {
+			for (int j = 0; j < dimension; j++) {
+				for (EuclideanSpacePoint p : points) {
+					Q[i][j] += (p.getCoordinate(i) - meanPoint.getCoordinate(i))
+							* (p.getCoordinate(j) - meanPoint.getCoordinate(j));
+				}
+				Q[i][j] /= (N - 1);
+			}
+		}
+
+		return new Matrix(Q);
+	}
 
 	public static EuclideanSpacePoint populationVariance(
 			Collection<EuclideanSpacePoint> points, int dimension) {
@@ -115,15 +153,65 @@ public class Utils {
 	}
 
 	/**
-	 * creates multidimensional Gaussian function for a given cluster of poins
+	 * creates multidimensional Gaussian function for a given cluster of points
 	 * 
 	 * @param cluster
 	 * @return
 	 */
 	public static Functor createGaussianForCluster(
-			Cluster<? extends PointWithFitness> cluster) {
-		// TODO: implement
-		throw new RuntimeException("not implemented");
+			Cluster<PointWithFitness> cluster,
+			Comparator<PointWithFitness> comparator) {
+
+		List<EuclideanSpacePoint> points = new ArrayList<EuclideanSpacePoint>(
+				cluster.getSize());
+		for (PointWithFitness clusterObj : cluster.getClusterPoints()) {
+			points.add(clusterObj.getPoint());
+		}
+		int dimension = points.get(0).getDimension();
+
+		EuclideanSpacePoint meanPoint = meanPoint(points, dimension);
+		Matrix covarianceMatrix = estimateCovarianceMatix(dimension, meanPoint,
+				points);
+		// scale covariance matrix to fill basins of attraction
+		covarianceMatrix = scaleCovarianceMatrix(dimension, meanPoint, points,
+				covarianceMatrix);
+		Matrix meanVector = new Matrix(meanPoint.getCoordinates(), dimension);
+		double heigh = getPointWithBestFitness(cluster.getClusterPoints(),
+				comparator);
+
+		logger.debug("Gaussian heigh: " + heigh);
+
+		return new MultivariateGaussianFunctor(covarianceMatrix, meanVector,
+				heigh);
+	}
+
+	// TODO: make it adaptive
+	private static Matrix scaleCovarianceMatrix(int dimension,
+			EuclideanSpacePoint meanPoint, List<EuclideanSpacePoint> points,
+			Matrix matrix) {
+		EigenvalueDecomposition ed = new EigenvalueDecomposition(matrix);
+		Matrix eigenVectors = ed.getV();
+		double[][] array = eigenVectors.getArray();
+		for (int i = 0; i < dimension; i++) {
+			// copy eigenvector to coords
+			double[] coords = new double[dimension];
+			for (int j = 0; j < dimension; j++) {
+				coords[j] = array[j][i];
+			}
+			EuclideanSpacePoint eigen = new EuclideanSpacePoint(coords);
+			EuclideanSpacePoint outlier = eigen.multiply(2.0).add(meanPoint);
+			points.add(outlier);
+			outlier = eigen.multiply(-2.0).add(meanPoint);
+			points.add(outlier);
+		}
+
+		return estimateCovarianceMatix(dimension, meanPoint, points);
+	}
+
+	private static double getPointWithBestFitness(
+			Collection<PointWithFitness> clusterPoints,
+			Comparator<PointWithFitness> comparator) {
+		return Collections.min(clusterPoints, comparator).getFitness();
 	}
 
 	public static void main(String[] args) {

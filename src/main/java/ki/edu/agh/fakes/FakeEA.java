@@ -73,18 +73,12 @@ public class FakeEA extends AbstractEvolutionaryAlgorithm implements
 	@Override
 	public EAResult execute() {
 		try {
-
-			// TODO: create list of individuals, depending on the function which
-			// are
-			// the subject of optimization (generate Gaussian distribution in
-			// the
-			// basins of attraction)
 			setIndividuals(new ArrayList<IndividualWithRealVectorPhenotype>(
 					clusterCenters.size() * clusterSize));
 
 			switch (state) {
 			case EXEC1:
-				logger.info("FakeEA - first execution");
+				logger.info("FakeEA - first execution: generating Gaussian samples in basins of attraction");
 				// generate Gaussian cluster
 				for (Coords2D c : clusterCenters) {
 					EuclideanSpacePoint mean = new EuclideanSpacePoint(
@@ -92,7 +86,7 @@ public class FakeEA extends AbstractEvolutionaryAlgorithm implements
 					Collection<EuclideanSpacePoint> points = PointGenerator
 							.generateGaussianPoints2D(mean, standardDev,
 									clusterSize);
-					performExec2(points);
+					assignFitnessToPoints(points);
 				}
 				state = EXEC2;
 
@@ -100,15 +94,15 @@ public class FakeEA extends AbstractEvolutionaryAlgorithm implements
 				break;
 
 			case EXEC2:
-				logger.info("FakeEA - second execution");
+				logger.info("FakeEA - second execution: generate uniformly distributed noise");
 				// generate random cluster
 				for (Coords2D c : clusterCenters) {
 					EuclideanSpacePoint mean = new EuclideanSpacePoint(
 							new double[] { c.getX(), c.getY() });
 					Collection<EuclideanSpacePoint> points = PointGenerator
-							.generateUniformCircle2D(mean, 2.5 * standardDev,
+							.generateUniformCircle2D(mean, 8 * standardDev,
 									clusterSize);
-					performExec2(points);
+					assignFitnessToPoints(points);
 				}
 				state = FIN;
 
@@ -126,7 +120,7 @@ public class FakeEA extends AbstractEvolutionaryAlgorithm implements
 		return null;
 	}
 
-	private void performExec2(Collection<EuclideanSpacePoint> points) {
+	private void assignFitnessToPoints(Collection<EuclideanSpacePoint> points) {
 		for (EuclideanSpacePoint p : points) {
 			IndividualWithRealVectorPhenotype phenotype = new IndividualWithRealVectorPhenotype(
 					new EuclideanSpacePhenotype(p));
@@ -156,7 +150,7 @@ public class FakeEA extends AbstractEvolutionaryAlgorithm implements
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		logger.debug("FakeEA created. clusterSize: " + clusterSize
-				+ " standardDev: " + standardDev + " clusterCenters: "
+				+ ", standardDev: " + standardDev + ", clusterCenters: "
 				+ clusterCenters);
 	}
 
