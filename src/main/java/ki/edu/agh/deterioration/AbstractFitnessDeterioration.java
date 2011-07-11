@@ -75,25 +75,26 @@ public abstract class AbstractFitnessDeterioration implements
 		Collection<Functor> crunchingFunctions = new ArrayList<Functor>(
 				clusters.size());
 
-		Date now = new Date();
-		int i = 1;
 		for (Cluster<? extends PointWithFitness> cluster : clusters) {
 			Functor crunchingFunctor = createCrunchingFunctorForCluster(cluster);
-			try {
-				String fileName = "crunchFun" + i + "_" + now.getTime();
-				logger.debug("Print crunching functor to: " + fileName);
-				ProblemDomain problem = new MultimodalRealSpaceProblem(
-						getDomain(), new StandardFitnessFunction(
-								crunchingFunctor));
-				PrintUtils.writeProblemPoints(fileName, problem, 200);
-			} catch (IOException e) {
-				logger.warn("Cannot write crunching functor to file", e);
-			}
+			//printCrunchingFunctor(now, i, crunchingFunctor);
 			crunchingFunctions.add(crunchingFunctor);
-			i++;
 		}
 
 		return createDeterioratedFitness(currentFitness, crunchingFunctions);
+	}
+
+	protected void printCrunchingFunctor(Date now, int i, Functor crunchingFunctor) {
+		try {
+			String fileName = "crunchFun" + i + "_" + now.getTime();
+			logger.debug("Print crunching functor to: " + fileName);
+			ProblemDomain problem = new MultimodalRealSpaceProblem(
+					getDomain(), new StandardFitnessFunction(
+							crunchingFunctor));
+			PrintUtils.writeProblemPoints(fileName, problem, 200);
+		} catch (IOException e) {
+			logger.warn("Cannot write crunching functor to file", e);
+		}
 	}
 
 	/**

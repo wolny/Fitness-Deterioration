@@ -7,3 +7,19 @@ TODO: algorithm description, pseudo-code
 description of the remaining chapters
 
 \section{Pseudocode}
+
+\begin{algorithmic}
+\WHILE{$i < getIterationCount()$} 
+	\STATE {$execute(evolutionaryAlgorithm)$}
+	\STATE {$population=getPopulation(evolutionaryAlgorithm)$}
+	\STATE {$clusters=cluster(population)$}
+	\STATE {$detFitness=performCrunching(clusters,currentFitness)$}
+	\IF{$detFitness = null$}
+		\STATE {$break$}
+	\ENDIF
+	\STATE {$saveClusters(clusters)$}
+	\STATE {$updateFitness(detFitness)$}
+\ENDWHILE
+\STATE {$execute(evolutionaryAlgorithm)$}
+\STATE {$extractBestClusters()$}
+\end{algorithmic}

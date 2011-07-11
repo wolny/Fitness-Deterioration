@@ -1,13 +1,14 @@
 package ki.edu.agh.algorithm;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.clustering.ClusteringAlgorithm;
+import ki.edu.agh.clustering.SimpleCluster;
 import ki.edu.agh.deterioration.AbstractFitnessDeterioration;
 import ki.edu.agh.deterioration.FitnessDeterioration;
 import ki.edu.agh.deterioration.PointWithFitness;
@@ -33,7 +34,7 @@ public abstract class AbstractSequentialDeteriorationEA implements
 
 	private ClusteringAlgorithm<MetricSpacePoint> clusteringAlgorithm;
 
-	private final List<Cluster<? extends PointWithFitness>> clusters = new LinkedList<Cluster<? extends PointWithFitness>>();
+	private final List<Cluster<PointWithFitness>> clusters = new LinkedList<Cluster<PointWithFitness>>();
 
 	private AlgorithmState currentState;
 
@@ -91,25 +92,26 @@ public abstract class AbstractSequentialDeteriorationEA implements
 	protected abstract FitnessFunction performClusteringAndFitnessDeterioration(
 			Collection<Cluster<MetricSpacePoint>> currentClusters);
 
-	@SuppressWarnings("unchecked")
 	public void run() throws Exception {
 		logger.debug("initializing algorithm ...");
-		String fileName= "originalFitnessLand";
+		String fileName = "originalFitnessLand";
 		logger.debug("Printing fitness landscape to file: " + fileName);
-		PrintUtils.writeProblemPoints(fileName, getProblemDomain(), DEF_NUM_OF_NODES);
-		
+		PrintUtils.writeProblemPoints(fileName, getProblemDomain(),
+				DEF_NUM_OF_NODES);
+
 		for (currentIteration = 0; currentIteration < getIterationCount(); currentIteration++) {
 			// perform signle evolutionary algorithm execution
 			getEvolutionaryAlgorithm().execute();
+			Individual[] individuals = getEvolutionaryAlgorithm()
+					.getPopulation().getAllMembers();
 
-			// create list of individuals
-			List<? extends Individual> individuals = Arrays
-					.asList(getEvolutionaryAlgorithm().getPopulation()
-							.getAllMembers());
-
+			List<MetricSpacePoint> pointsToCluster = new ArrayList<MetricSpacePoint>(
+					individuals.length);
+			for (Individual individual : individuals) {
+				pointsToCluster.add((MetricSpacePoint) individual);
+			}
 			// initialize clustering algorithm
-			getClusteringAlgorithm().setDataSet(
-					(Collection<MetricSpacePoint>) individuals);
+			getClusteringAlgorithm().setDataSet(pointsToCluster);
 
 			logger.info("Performing fitness deterioration ...");
 
@@ -147,13 +149,16 @@ public abstract class AbstractSequentialDeteriorationEA implements
 	 * 
 	 * @param opticsClusters
 	 */
-	@SuppressWarnings("unchecked")
 	private void saveClusters(
 			Collection<Cluster<MetricSpacePoint>> opticsClusters) {
 		logger.debug("Saving clusters which have given the best deterioration");
 
 		for (Cluster<MetricSpacePoint> cluster : opticsClusters) {
-			getClusters().add((Cluster<? extends PointWithFitness>) cluster);
+			Cluster<PointWithFitness> simpleCluster = new SimpleCluster<PointWithFitness>();
+			for (MetricSpacePoint obj : cluster.getClusterPoints()) {
+				simpleCluster.addClusterPoint((PointWithFitness) obj);
+			}
+			getClusters().add(simpleCluster);
 		}
 	}
 
@@ -176,7 +181,7 @@ public abstract class AbstractSequentialDeteriorationEA implements
 				getProblemDomain(), DEF_NUM_OF_NODES);
 	}
 
-	public List<Cluster<? extends PointWithFitness>> getClusters() {
+	public List<Cluster<PointWithFitness>> getClusters() {
 		return clusters;
 	}
 
@@ -206,7 +211,8 @@ public abstract class AbstractSequentialDeteriorationEA implements
 		// set fitness function in EA
 		getEvolutionaryAlgorithm().setFitnessFunction(fitnessFunction);
 
-		// set problem domain in fitness deterioration algorithm for visualization
+		// set problem domain in fitness deterioration algorithm for
+		// visualization
 		((AbstractFitnessDeterioration) getFitnessDeterioration())
 				.setDomain(getProblemDomain().getDomain());
 	}

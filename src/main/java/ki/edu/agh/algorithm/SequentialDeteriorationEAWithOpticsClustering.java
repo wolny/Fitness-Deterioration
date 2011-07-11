@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import ki.edu.agh.clustering.Cluster;
+import ki.edu.agh.clustering.SimpleCluster;
 import ki.edu.agh.clustering.optics.OpticsClustering;
 import ki.edu.agh.clustering.optics.OpticsParamteres;
 import ki.edu.agh.deterioration.PointWithFitness;
@@ -17,7 +18,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SequentialDeteriorationEAWithOpticsClustering extends
 		AbstractSequentialDeteriorationEA {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected FitnessFunction performClusteringAndFitnessDeterioration(
 			Collection<Cluster<MetricSpacePoint>> currentClusters) {
@@ -39,8 +39,11 @@ public class SequentialDeteriorationEAWithOpticsClustering extends
 				extractedClusters.size());
 
 		for (Cluster<MetricSpacePoint> cluster : extractedClusters) {
-			clustersForDeterioration
-					.add((Cluster<? extends PointWithFitness>) cluster);
+			SimpleCluster<PointWithFitness> simpleCluster = new SimpleCluster<PointWithFitness>();
+			for (MetricSpacePoint obj : cluster.getClusterPoints()) {
+				simpleCluster.addClusterPoint((PointWithFitness) obj);
+			}
+			clustersForDeterioration.add(simpleCluster);
 		}
 
 		FitnessFunction deterioratedFitness = getFitnessDeterioration()
