@@ -8,4 +8,6 @@ public interface ProblemDomain {
 	Domain getDomain();
 	FitnessFunction getFitnessFunction();
 	void setFitnessFunction(FitnessFunction fitnessFunction);
+	boolean isMinimization();
+	void setMinimization(boolean minimization);
 }

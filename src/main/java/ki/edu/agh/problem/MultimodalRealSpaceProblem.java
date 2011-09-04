@@ -7,6 +7,7 @@ public class MultimodalRealSpaceProblem implements ProblemDomain {
 
 	private Domain domain;
 	private FitnessFunction fitnessFunction;
+	private boolean minimization;
 
 	public MultimodalRealSpaceProblem() {
 	}
@@ -39,6 +40,16 @@ public class MultimodalRealSpaceProblem implements ProblemDomain {
 	@Override
 	public FitnessFunction getFitnessFunction() {
 		return fitnessFunction;
+	}
+
+	@Override
+	public boolean isMinimization() {
+		return minimization;
+	}
+
+	@Override
+	public void setMinimization(boolean minimization) {
+		this.minimization = minimization;
 	}
 
 }

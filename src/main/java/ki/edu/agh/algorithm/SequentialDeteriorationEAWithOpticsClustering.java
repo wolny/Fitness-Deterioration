@@ -13,6 +13,7 @@ import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.point.MetricSpacePoint;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SequentialDeteriorationEAWithOpticsClustering extends
@@ -57,8 +58,11 @@ public class SequentialDeteriorationEAWithOpticsClustering extends
 		logger.debug("main");
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
 				"test-context.xml");
-		AbstractSequentialDeteriorationEA algorithm = applicationContext
-				.getBean(SequentialDeteriorationEAWithOpticsClustering.class);
+		
+		applicationContext.publishEvent(new ContextStartedEvent(applicationContext));
+		
+		AbstractSequentialDeteriorationEA algorithm = (AbstractSequentialDeteriorationEA) applicationContext
+				.getBean("algorithm");
 
 		algorithm.run();
 

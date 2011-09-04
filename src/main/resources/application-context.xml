@@ -39,6 +39,8 @@
 						</constructor-arg>
 					</bean>
 				</property>
+				<!-- TODO: specify if the the problem is minimization or maximization -->
+				<property name="minimization" value="false" />
 			</bean>
 		</property>
 
@@ -68,16 +70,14 @@
 
 		<!-- fitness deterioration algorithm -->
 		<property name="fitnessDeterioration">
-			<bean class="ki.edu.agh.deterioration.SimpleGaussianFitnessDeterioration">
-				<!-- maximization problem -->
-				<property name="minimization" value="false" />
-			</bean>
+			<bean class="ki.edu.agh.deterioration.SimpleGaussianFitnessDeterioration" />
 		</property>
 	</bean>
 
 	<bean id="fake" class="ki.edu.agh.fakes.FakeEA">
 		<property name="clusterSize" value="30" />
-		<!-- in real algorithm standardDev should be correlated with stdDev of the recombination operation -->
+		<!-- in real algorithm standardDev should be correlated with stdDev of 
+			the recombination operation -->
 		<property name="standardDev" value="0.3" />
 		<property name="functor">
 			<bean class="ki.edu.agh.functors.UniModalFunction" />

@@ -39,6 +39,8 @@
 						</constructor-arg>
 					</bean>
 				</property>
+				<!-- TODO: specify if the the problem is minimization or maximization -->
+				<property name="minimization" value="false" />
 			</bean>
 		</property>
 
@@ -68,10 +70,7 @@
 
 		<!-- fitness deterioration algorithm -->
 		<property name="fitnessDeterioration">
-			<bean class="ki.edu.agh.deterioration.SimpleGaussianFitnessDeterioration">
-				<!-- maximization problem -->
-				<property name="minimization" value="false" />
-			</bean>
+			<bean class="ki.edu.agh.deterioration.SimpleGaussianFitnessDeterioration" />
 		</property>
 	</bean>
 

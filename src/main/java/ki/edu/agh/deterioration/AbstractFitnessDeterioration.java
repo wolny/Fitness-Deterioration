@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 
+import ki.edu.agh.algorithm.AbstractSequentialDeteriorationEA;
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.fintess.StandardFitnessFunction;
@@ -16,6 +17,8 @@ import ki.edu.agh.problem.MultimodalRealSpaceProblem;
 import ki.edu.agh.problem.ProblemDomain;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextStartedEvent;
 
 /**
  * implementation of the basic fitness deterioration schema with one crunching
@@ -25,7 +28,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public abstract class AbstractFitnessDeterioration implements
-		FitnessDeterioration {
+		FitnessDeterioration, ApplicationListener<ContextStartedEvent> {
 
 	protected static final Logger logger = Logger
 			.getLogger(FitnessDeterioration.class);
@@ -77,20 +80,20 @@ public abstract class AbstractFitnessDeterioration implements
 
 		for (Cluster<? extends PointWithFitness> cluster : clusters) {
 			Functor crunchingFunctor = createCrunchingFunctorForCluster(cluster);
-			//printCrunchingFunctor(now, i, crunchingFunctor);
+			// printCrunchingFunctor(now, i, crunchingFunctor);
 			crunchingFunctions.add(crunchingFunctor);
 		}
 
 		return createDeterioratedFitness(currentFitness, crunchingFunctions);
 	}
 
-	protected void printCrunchingFunctor(Date now, int i, Functor crunchingFunctor) {
+	protected void printCrunchingFunctor(Date now, int i,
+			Functor crunchingFunctor) {
 		try {
 			String fileName = "crunchFun" + i + "_" + now.getTime();
 			logger.debug("Print crunching functor to: " + fileName);
-			ProblemDomain problem = new MultimodalRealSpaceProblem(
-					getDomain(), new StandardFitnessFunction(
-							crunchingFunctor));
+			ProblemDomain problem = new MultimodalRealSpaceProblem(getDomain(),
+					new StandardFitnessFunction(crunchingFunctor));
 			PrintUtils.writeProblemPoints(fileName, problem, 200);
 		} catch (IOException e) {
 			logger.warn("Cannot write crunching functor to file", e);
@@ -148,5 +151,13 @@ public abstract class AbstractFitnessDeterioration implements
 			}
 			return 0;
 		}
+	};
+
+	@Override
+	public void onApplicationEvent(ContextStartedEvent event) {
+		AbstractSequentialDeteriorationEA algorithm = (AbstractSequentialDeteriorationEA) event
+				.getApplicationContext().getBean("algorithm");
+
+		setMinimization(algorithm.getProblemDomain().isMinimization());
 	};
 }

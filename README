@@ -1,0 +1,22 @@
+Configuration file: application-context.xml
+Build project: mvn clean install
+Program execution: mvn exec:java
+
+Program performs global optimization for a given problem.
+Global optimization algorithm is controled by a hybrid approach
+called 'Sequantial Niching'. It performs several runs of specified
+EA. After each run it the algorithm alters fitness function in a way
+that prevents exploration of optimas founded in previous runs.
+
+Program writes the results in 'diagrams' catalog:
+* cluster's members are stored in files of the name 'clusterN', where N is the cluster's number
+* populations for each run are stored in files 'populationN', where N is the number of EA run
+* fitness landscape before the algorithm start is stored in file 'originalFitnessLand'
+* reachablity plot for OPTICS algorithm is stored in ''reachabilityPlot'
+* fitness landscape after each run is stored in 'fintessLand_iterN' where N is the number of EA run
+
+
+GNUPLOT tips:
+
+  
+

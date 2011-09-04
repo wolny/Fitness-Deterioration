@@ -100,7 +100,7 @@ public abstract class AbstractSequentialDeteriorationEA implements
 				DEF_NUM_OF_NODES);
 
 		for (currentIteration = 0; currentIteration < getIterationCount(); currentIteration++) {
-			// perform signle evolutionary algorithm execution
+			// perform single evolutionary algorithm execution
 			getEvolutionaryAlgorithm().execute();
 			Individual[] individuals = getEvolutionaryAlgorithm()
 					.getPopulation().getAllMembers();

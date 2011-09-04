@@ -43,30 +43,6 @@ public class SimpleGaussianFitnessDeteriorationTest {
 
 	}
 
-	@Test
-	public void testFitnessDeterioration() {
-		// mock fitness function
-		fitness = mock(FitnessFunction.class);
-		when(fitness.computeFitness(any(Phenotype.class))).thenReturn(
-				fitnessValue);
-
-		// mock cruncingFunctor
-		crunchingFunctor = mock(Functor.class);
-		when(crunchingFunctor.getValue(any(EuclideanSpacePoint.class)))
-				.thenReturn(functorValue);
-
-		MyFitnessDeterioration fitnessDeterioration = Mockito
-				.spy(new MyFitnessDeterioration());
-
-		FitnessFunction deterioratedFitness = fitnessDeterioration
-				.deteriorateFitness(fitness, clusters);
-
-		double value = deterioratedFitness
-				.computeFitness(new EuclideanSpacePhenotype(null));
-		Assert.assertEquals(fitnessValue + clustersCount * functorValue, value);
-
-	}
-
 	@Before
 	public void init() {
 		clusters = new ArrayList<Cluster<? extends PointWithFitness>>(
@@ -76,5 +52,33 @@ public class SimpleGaussianFitnessDeteriorationTest {
 			Cluster<? extends PointWithFitness> cluster = mock(Cluster.class);
 			clusters.add(cluster);
 		}
+
+		// mock cruncingFunctor
+		crunchingFunctor = mock(Functor.class);
+		when(crunchingFunctor.getValue(any(EuclideanSpacePoint.class)))
+				.thenReturn(functorValue);
+
 	}
+
+	@Test
+	public void testFitnessDeterioration() {
+		// mock fitness function
+		fitness = mock(FitnessFunction.class);
+		when(fitness.computeFitness(any(Phenotype.class))).thenReturn(
+				fitnessValue);
+
+		MyFitnessDeterioration fitnessDeterioration = Mockito
+				.spy(new MyFitnessDeterioration());
+
+		FitnessFunction deterioratedFitness = fitnessDeterioration
+				.deteriorateFitness(fitness, clusters);
+
+		double value = deterioratedFitness
+				.computeFitness(new EuclideanSpacePhenotype(null));
+		// by default we consider the problem to be maximization problem,
+		// so we substract Gaussians from current fitness value
+		Assert.assertEquals(fitnessValue - clustersCount * functorValue, value);
+
+	}
+
 }
