@@ -57,7 +57,7 @@ public class SequentialDeteriorationEAWithOpticsClustering extends
 	public static void main(String[] args) throws Exception {
 		logger.debug("main");
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				"test-context.xml");
+				"application-context.xml");
 		
 		applicationContext.publishEvent(new ContextStartedEvent(applicationContext));
 		

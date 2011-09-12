@@ -8,8 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
-
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.fintess.FitnessFunction;
@@ -23,6 +21,9 @@ import ki.edu.agh.population.FixedSizePopulation;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.IndividualWithRealVectorPhenotype;
 import ki.edu.agh.population.Population;
+
+import org.apache.log4j.Logger;
+
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 

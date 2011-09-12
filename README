@@ -17,6 +17,15 @@ Program writes the results in 'diagrams' catalog:
 
 
 GNUPLOT tips:
+set pointsize 0.5
+set pm3d map
+
+# plot cluster files whith 'pointtype 7'
+# plot fitness landscape with 'with pm3d'
+splot 'file' wiht pm3d
+
+#plotting pm3d and population on the same plot
+splot 'fitnessLand_iter1' with pm3d, 'fakePopulation1' pointtype 7 notitle
 
   
 
