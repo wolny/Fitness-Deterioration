@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 
-import ki.edu.agh.algorithm.AbstractSequentialDeteriorationEA;
+import ki.edu.agh.algorithm.AbstractSequentialNiching;
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.fintess.StandardFitnessFunction;
@@ -155,7 +155,7 @@ public abstract class AbstractFitnessDeterioration implements
 
 	@Override
 	public void onApplicationEvent(ContextStartedEvent event) {
-		AbstractSequentialDeteriorationEA algorithm = (AbstractSequentialDeteriorationEA) event
+		AbstractSequentialNiching algorithm = (AbstractSequentialNiching) event
 				.getApplicationContext().getBean("algorithm");
 
 		setMinimization(algorithm.getProblemDomain().isMinimization());

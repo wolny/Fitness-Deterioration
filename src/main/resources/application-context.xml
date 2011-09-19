@@ -1,96 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations" value="classpath:algorithm.properties" />
-	</bean>
+  <bean
+    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="classpath:algorithm.properties" />
+  </bean>
 
-	<bean id="algorithm"
-		class="ki.edu.agh.algorithm.SequentialDeteriorationEAWithOpticsClustering">
-		<property name="problemDomain">
-			<bean class="ki.edu.agh.problem.MultimodalRealSpaceProblem">
-				<!-- TODO: set domain and functor -->
-				<property name="domain">
-					<bean class="ki.edu.agh.problem.Domain">
-						<property name="multidimensionalCube">
-							<list>
-								<!-- first dimension interval -->
-								<bean class="ki.edu.agh.problem.Interval">
-									<constructor-arg value="-2." />
-									<constructor-arg value="2." />
-								</bean>
-								<!-- second dimension interval -->
-								<bean class="ki.edu.agh.problem.Interval">
-									<constructor-arg value="-2." />
-									<constructor-arg value="2." />
-								</bean>
-							</list>
-						</property>
-					</bean>
-				</property>
-				<property name="fitnessFunction">
-					<bean class="ki.edu.agh.fintess.StandardFitnessFunction">
-						<!-- TODO: change it to test different multimodal functions -->
-						<constructor-arg>
-							<bean class="ki.edu.agh.functors.UniModalFunction" />
-						</constructor-arg>
-					</bean>
-				</property>
-				<!-- TODO: specify if the the problem is minimization or maximization -->
-				<property name="minimization" value="false" />
-			</bean>
-		</property>
+  <bean id="algorithm"
+    class="ki.edu.agh.algorithm.SequentialNichingWithOpticsClustering">
+    <property name="problemDomain">
+      <bean class="ki.edu.agh.problem.MultimodalRealSpaceProblem">
+        <!-- TODO: set domain and functor -->
+        <property name="domain">
+          <bean class="ki.edu.agh.problem.Domain">
+            <property name="multidimensionalCube">
+              <list>
+                <!-- first dimension interval -->
+                <bean class="ki.edu.agh.problem.Interval">
+                  <constructor-arg value="-2." />
+                  <constructor-arg value="2." />
+                </bean>
+                <!-- second dimension interval -->
+                <bean class="ki.edu.agh.problem.Interval">
+                  <constructor-arg value="-2." />
+                  <constructor-arg value="2." />
+                </bean>
+              </list>
+            </property>
+          </bean>
+        </property>
+        <property name="fitnessFunction">
+          <bean class="ki.edu.agh.fintess.StandardFitnessFunction">
+            <!-- TODO: change it to test different multimodal 
+              functions -->
+            <constructor-arg>
+              <bean class="ki.edu.agh.functors.UniModalFunction" />
+            </constructor-arg>
+          </bean>
+        </property>
+        <!-- TODO: specify if the the problem is minimization 
+          or maximization -->
+        <property name="minimization" value="false" />
+      </bean>
+    </property>
 
-		<property name="iterationCount" value="${algorithm.iterationCount}" />
+    <property name="iterationCount" value="${algorithm.iterationCount}" />
 
-		<!-- clustering algorithm -->
-		<property name="clusteringAlgorithm">
-			<bean class="ki.edu.agh.clustering.optics.OpticsClustering">
-				<constructor-arg>
-					<bean class="ki.edu.agh.clustering.optics.OpticsParamteres">
-						<property name="minPoints" value="${optics.min_pts}" />
-						<!-- problem's domain dependent -->
-						<property name="epsilon" value="${optics.eps}" />
-					</bean>
-				</constructor-arg>
-			</bean>
-		</property>
+    <!-- clustering algorithm -->
+    <property name="clusteringAlgorithm">
+      <bean class="ki.edu.agh.clustering.optics.OpticsClustering">
+        <constructor-arg>
+          <bean
+            class="ki.edu.agh.clustering.optics.OpticsParamteres">
+            <property name="minPoints" value="${optics.min_pts}" />
+            <!-- problem's domain dependent -->
+            <property name="epsilon" value="${optics.eps}" />
+          </bean>
+        </constructor-arg>
+      </bean>
+    </property>
 
-		<!-- evolutionary algorithm -->
-		<!--<property name="evolutionaryAlgorithm"> <bean class="ki.edu.agh.evolutionary.algorithm.RealValueGeneticAlgorithm"> 
-			<property name="fitnessFunction"> <bean class="ki.edu.agh.fintess.RobustFitnessFunction"> 
-			<constructor-arg> <bean class="ki.edu.agh.fintess.StandardFitnessFunction"> 
-			<constructor-arg> <bean class="ki.edu.agh.functors.UniModalFunction" /> </constructor-arg> 
-			</bean> </constructor-arg> </bean> </property> </bean> </property> -->
+    <!-- evolutionary algorithm -->
+    <!--<property name="evolutionaryAlgorithm"> <bean class="ki.edu.agh.evolutionary.algorithm.RealValueGeneticAlgorithm"> 
+      <property name="fitnessFunction"> <bean class="ki.edu.agh.fintess.RobustFitnessFunction"> 
+      <constructor-arg> <bean class="ki.edu.agh.fintess.StandardFitnessFunction"> 
+      <constructor-arg> <bean class="ki.edu.agh.functors.UniModalFunction" 
+      /> </constructor-arg> </bean> </constructor-arg> </bean> </property> 
+      </bean> </property> -->
 
-		<property name="evolutionaryAlgorithm" ref="fake" />
+    <property name="evolutionaryAlgorithm" ref="fake" />
 
-		<!-- fitness deterioration algorithm -->
-		<property name="fitnessDeterioration">
-			<bean class="ki.edu.agh.deterioration.SimpleGaussianFitnessDeterioration" />
-		</property>
-	</bean>
+    <!-- fitness deterioration algorithm -->
+    <property name="fitnessDeterioration">
+      <bean
+        class="ki.edu.agh.deterioration.WeightedGaussianFitnessDeterioration">
+        <property name="clusterPressure" value="1.0" />
+      </bean>
+    </property>
+  </bean>
 
-	<bean id="fake" class="ki.edu.agh.fakes.FakeEA">
-		<property name="clusterSize" value="30" />
-		<!-- in real algorithm standardDev should be correlated with stdDev of 
-			the recombination operation -->
-		<property name="standardDev" value="0.3" />
-		<property name="functor">
-			<bean class="ki.edu.agh.functors.UniModalFunction" />
-		</property>
-		<property name="clusterCenters">
-			<list>
-				<bean class="ki.edu.agh.fakes.Coords2D">
-					<!-- x -->
-					<constructor-arg value="0.0" />
-					<!-- y -->
-					<constructor-arg value="0.0" />
-				</bean>
-			</list>
-		</property>
-	</bean>
+  <bean id="fake" class="ki.edu.agh.fakes.FakeEA">
+    <property name="clusterSize" value="30" />
+    <!-- in real algorithm standardDev should be correlated with 
+      stdDev of the recombination operation -->
+    <property name="standardDev" value="0.3" />
+    <property name="functor">
+      <bean class="ki.edu.agh.functors.UniModalFunction" />
+    </property>
+    <property name="clusterCenters">
+      <list>
+        <bean class="ki.edu.agh.fakes.Coords2D">
+          <!-- x -->
+          <constructor-arg value="0.0" />
+          <!-- y -->
+          <constructor-arg value="0.0" />
+        </bean>
+      </list>
+    </property>
+  </bean>
 </beans>

@@ -9,7 +9,7 @@
 	</bean>
 
 	<bean id="algorithm"
-		class="ki.edu.agh.algorithm.SequentialDeteriorationEAWithOpticsClustering">
+		class="ki.edu.agh.algorithm.SequentialNichingWithOpticsClustering">
 		<property name="problemDomain">
 			<bean class="ki.edu.agh.problem.MultimodalRealSpaceProblem">
 				<!-- TODO: set domain and functor -->

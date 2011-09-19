@@ -5,6 +5,7 @@ import java.util.Collection;
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.functors.Functor;
+import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.EuclideanSpacePhenotype;
 import ki.edu.agh.population.Phenotype;
 import ki.edu.agh.statistics.Utils;
@@ -34,15 +35,16 @@ public class SimpleGaussianFitnessDeterioration extends
 		//
 		@Override
 		public double computeFitness(Phenotype phenotype) {
-			double sign = isMinimization() ? 1 : -1;
-			double sum = fitness.computeFitness(phenotype);
+			EuclideanSpacePoint x = ((EuclideanSpacePhenotype) phenotype)
+					.getPoint();
+			double fitnessValue = fitness.computeFitness(phenotype);
+			double sum = 0.0;
 			for (Functor crunchingFunctor : crunchingFunctions) {
-				sum += sign
-						* crunchingFunctor
-								.getValue(((EuclideanSpacePhenotype) phenotype)
-										.getPoint());
+				sum += crunchingFunctor
+						.getValue(x);
 			}
-			return sum;
+			int sign = isMinimization() ? 1 : -1;
+			return fitnessValue + sign * sum;
 		}
 
 	}
