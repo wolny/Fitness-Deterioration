@@ -105,7 +105,7 @@ public class WeightedGaussianFitnessDeterioration extends
 	public FitnessFunction createDeterioratedFitness(
 			FitnessFunction currentFitness,
 			Collection<Functor> crunchingFunctions) {
-		Collection<ClusterCrunchingFunctor> clusterCrunchingFunctions = new ArrayList<WeightedGaussianFitnessDeterioration.ClusterCrunchingFunctor>(
+		Collection<ClusterCrunchingFunctor> clusterCrunchingFunctions = new ArrayList<ClusterCrunchingFunctor>(
 				crunchingFunctions.size());
 		for (Functor crunchingFunction : crunchingFunctions) {
 			clusterCrunchingFunctions

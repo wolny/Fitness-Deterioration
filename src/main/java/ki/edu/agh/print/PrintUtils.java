@@ -3,16 +3,22 @@ package ki.edu.agh.print;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import ki.edu.agh.deterioration.PointWithFitness;
+import ki.edu.agh.fintess.FitnessFunction;
+import ki.edu.agh.fintess.StandardFitnessFunction;
+import ki.edu.agh.functors.Functor;
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.Population;
+import ki.edu.agh.problem.Domain;
+import ki.edu.agh.problem.Interval;
+import ki.edu.agh.problem.MultimodalRealSpaceProblem;
 import ki.edu.agh.problem.ProblemDomain;
 import ki.edu.agh.statistics.PointGenerator;
-import ki.edu.agh.statistics.Utils;
 
 public class PrintUtils {
 	public static final String DIAGRAM_DIR = "diagrams";
@@ -51,8 +57,8 @@ public class PrintUtils {
 
 	public static void writeProblemPoints(String fileName,
 			ProblemDomain problem, int numOfNodes) throws IOException {
-		List<PointWithFitness> pwfs = PointGenerator.createPointsWithFitnessForProblemDomain(
-				problem, numOfNodes);
+		List<PointWithFitness> pwfs = PointGenerator
+				.createPointsWithFitnessForProblemDomain(problem, numOfNodes);
 		writePointsWithFitness(fileName, pwfs);
 	}
 
@@ -79,13 +85,30 @@ public class PrintUtils {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Population population = Utils.createRandomUniModalPopulation(2, 10);
-		writePopulation("population", population);
+		Functor functor = new Functor() {
+			@Override
+			public double getValue(EuclideanSpacePoint point) {
+				double x = point.getCoordinate(0);
+				double y = point.getCoordinate(1);
 
-		double x = 0.11303800698725097;
-		double y = 0.19836672073738826;
-		// 1.8984167202331006
-		double exp = 2. * Math.exp(-(x * x + y * y));
-		System.out.println(exp);
+				double result = 2.0
+						* Math.exp(-((x + 1.) * (x + 1.) + (y + 1.) * (y + 1.)))
+						+ 1.5
+						* Math.exp(-((x - 1.1) * (x - 1.1) + y * y))
+						+ 4.0
+						* Math.exp(-3.0
+								* ((x + 1.5) * (x + 1.5) + (y - 1.5)
+										* (y - 1.5)));
+				return result;
+			}
+		};
+		FitnessFunction fitnessFunction = new StandardFitnessFunction(functor);
+		Domain domain = new Domain();
+		Interval i1 = new Interval(-4, 4);
+		Interval i2 = new Interval(-4, 4);
+		domain.setMultidimensionalCube(Arrays.asList(i1, i2));
+		ProblemDomain problem = new MultimodalRealSpaceProblem(domain,
+				fitnessFunction);
+		writeProblemPoints("tri_modal", problem, 400);
 	}
 }

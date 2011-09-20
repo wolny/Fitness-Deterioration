@@ -25,9 +25,9 @@ public class SequentialNichingWithOpticsClustering extends
 		// sequential niching
 		OpticsClustering<MetricSpacePoint> optics = (OpticsClustering<MetricSpacePoint>) getClusteringAlgorithm();
 
-		double delta = 0.5;
+		//double delta = 0.5;
 		Collection<Cluster<MetricSpacePoint>> extractedClusters = optics
-				.cluster(new OpticsParamteres(optics.getEpsilon() - delta));
+				.cluster(new OpticsParamteres(optics.getEpsilon() * 0.75));
 
 		if (extractedClusters.size() == 0) {
 			return null;
@@ -57,7 +57,7 @@ public class SequentialNichingWithOpticsClustering extends
 	public static void main(String[] args) throws Exception {
 		logger.debug("main");
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				"application-context.xml");
+				"application-context1.xml");
 		
 		applicationContext.publishEvent(new ContextStartedEvent(applicationContext));
 		
