@@ -6,12 +6,6 @@ import ki.edu.agh.population.Population;
 public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
 	@Override
-	public EAResult execute() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Population getPopulation() {
 		// TODO Auto-generated method stub
 		return null;

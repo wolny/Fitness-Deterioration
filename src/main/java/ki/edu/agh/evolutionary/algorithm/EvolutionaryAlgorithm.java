@@ -3,6 +3,7 @@ package ki.edu.agh.evolutionary.algorithm;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.Population;
+import ki.edu.agh.problem.ProblemDomain;
 
 public interface EvolutionaryAlgorithm {
 	/**
@@ -16,6 +17,12 @@ public interface EvolutionaryAlgorithm {
 	 * @return
 	 */
 	Population getPopulation();
+	
+	void setProblemDomain(ProblemDomain problem);
+	
+	void setPopulationSize(int size);
+	
+	int getPopulationSize();
 
 	/**
 	 * 

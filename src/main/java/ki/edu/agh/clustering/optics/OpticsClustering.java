@@ -14,7 +14,6 @@ import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.point.MetricSpacePoint;
 import ki.edu.agh.print.PrintUtils;
 import ki.edu.agh.statistics.PointGenerator;
-import ki.edu.agh.statistics.Utils;
 
 public class OpticsClustering<T extends MetricSpacePoint> extends
 		AbstractOpticsClustering<T> {
@@ -107,23 +106,40 @@ public class OpticsClustering<T extends MetricSpacePoint> extends
 
 	public static void main(String[] args) throws IOException {
 		double epsilon = 1.2;
-		int minPoints = 20;
-		double ePrim = 0.2;
+		int minPoints = 30;
+		double ePrim = 0.15;
 
-		Collection<EuclideanSpacePoint> circle2d = PointGenerator
-				.generateUniformCircle2D(Utils.createPoint(2, 0.0), 3.0, 600);
+//		Collection<EuclideanSpacePoint> circle2d = PointGenerator
+//				.generateUniformCircle2D(Utils.createPoint(2, 0.0), 3.0, 600);
+		
 		Collection<EuclideanSpacePoint> g1 = PointGenerator
 				.generateGaussianPoints2D(new EuclideanSpacePoint(new double[] {
-						-1., 1. }), 0.4, 300);
+						-1., 1. }), 0.3, 300);
+		
 		Collection<EuclideanSpacePoint> g2 = PointGenerator
 				.generateGaussianPoints2D(new EuclideanSpacePoint(new double[] {
-						1., -1. }), 0.2, 100);
+						-1., 0 }), 0.3, 300);
+		
+		Collection<EuclideanSpacePoint> g3 = PointGenerator
+				.generateGaussianPoints2D(new EuclideanSpacePoint(new double[] {
+						0, 0 }), 0.3, 300);
+		
+		Collection<EuclideanSpacePoint> g4 = PointGenerator
+				.generateGaussianPoints2D(new EuclideanSpacePoint(new double[] {
+						0, -1 }), 0.3, 300);
+		
+		Collection<EuclideanSpacePoint> g5 = PointGenerator
+				.generateGaussianPoints2D(new EuclideanSpacePoint(new double[] {
+						1., -1. }), 0.3, 300);
 
 		List<EuclideanSpacePoint> list = new ArrayList<EuclideanSpacePoint>(
 				1000);
-		list.addAll(circle2d);
+		//list.addAll(circle2d);
 		list.addAll(g1);
 		list.addAll(g2);
+		list.addAll(g3);
+		list.addAll(g4);
+		list.addAll(g5);
 
 		PrintUtils.writePoints("dataSet", list);
 
@@ -136,6 +152,6 @@ public class OpticsClustering<T extends MetricSpacePoint> extends
 		ClusteringParameterSet cps = new OpticsParamteres(ePrim);
 		Collection<Cluster<EuclideanSpacePoint>> clusters = optics.cluster(cps);
 		optics.printClusters(clusters);
-		
+
 	}
 }
