@@ -2,6 +2,9 @@ package ki.edu.agh.problem;
 
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.functors.Functor;
+import ki.edu.agh.point.EuclideanSpacePoint;
+import ki.edu.agh.population.EuclideanSpacePhenotype;
+import ki.edu.agh.population.Phenotype;
 
 public class MultimodalRealSpaceProblem implements ProblemDomain {
 
@@ -52,4 +55,21 @@ public class MultimodalRealSpaceProblem implements ProblemDomain {
 		this.minimization = minimization;
 	}
 
+	@Override
+	public boolean isFeasible(Phenotype phenotype) {
+		EuclideanSpacePhenotype esp = (EuclideanSpacePhenotype) phenotype;
+		EuclideanSpacePoint point = esp.getPoint();
+		for (int i = 0; i < getDomain().getSpaceDimension(); i++) {
+			if(!getDomain().getInterval(i).isInside(point.getCoordinate(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public EuclideanSpacePoint[] getRandomPoints(int popSize) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

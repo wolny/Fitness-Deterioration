@@ -5,6 +5,7 @@ import ki.edu.agh.evolutionary.selection.SelectionAlgorithm;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.Population;
+import ki.edu.agh.problem.ProblemDomain;
 
 /**
  * TODO: implement
@@ -15,7 +16,7 @@ import ki.edu.agh.population.Population;
 public abstract class AbstractEvolutionaryAlgorithm implements
 		EvolutionaryAlgorithm {
 	private int generationNumber;
-	private FitnessFunction fitnessFunction;
+	private ProblemDomain problem;
 	private SelectionAlgorithm selectionAlgorithm;
 	private ReproductionAlgorithm reproductionAlgorithm;
 
@@ -25,16 +26,6 @@ public abstract class AbstractEvolutionaryAlgorithm implements
 
 	public void increaseGenerationNumber() {
 		generationNumber++;
-	}
-
-	@Override
-	public FitnessFunction getFitnessFunction() {
-		return fitnessFunction;
-	}
-
-	@Override
-	public void setFitnessFunction(FitnessFunction fitnessFunction) {
-		this.fitnessFunction = fitnessFunction;
 	}
 
 	public SelectionAlgorithm getSelectionAlgorithm() {
@@ -56,8 +47,22 @@ public abstract class AbstractEvolutionaryAlgorithm implements
 
 	public void assignFitness(Population population) {
 		for (Individual individual : population) {
-			individual.setFitness(fitnessFunction.computeFitness(individual
+			individual.setFitness(getFitnessFunction().computeFitness(individual
 					.getPhenotype()));
 		}
+	}
+	
+	@Override
+	public ProblemDomain getProblemDomain() {
+		return problem;
+	}
+	
+	@Override
+	public void setProblemDomain(ProblemDomain problem) {
+		this.problem = problem;
+	}
+
+	private FitnessFunction getFitnessFunction() {
+		return getProblemDomain().getFitnessFunction();
 	}
 }

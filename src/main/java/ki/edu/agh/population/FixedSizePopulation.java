@@ -8,28 +8,17 @@ public class FixedSizePopulation implements Population {
 
 	private int currentSize;
 	private int populationSizeLimit;
-	private final Individual[] individuals;
-	private final Comparator<Individual> individualComparator;
+	private Individual[] individuals;
+	private final Comparator<Individual> individualComparator = new IndividualComparator();
 
 	public FixedSizePopulation(int populationSizeLimit) {
 		this.populationSizeLimit = populationSizeLimit;
 		this.individuals = new Individual[populationSizeLimit];
 		this.currentSize = 0;
-		this.individualComparator = new MinimizationIndividualComparator();
 	}
 
-	public FixedSizePopulation(int populationSizeLimit,
-			Comparator<Individual> individualComparator) {
-		this.populationSizeLimit = populationSizeLimit;
-		this.individuals = new Individual[populationSizeLimit];
-		this.currentSize = 0;
-		this.individualComparator = individualComparator;
-	}
-
-	public FixedSizePopulation(Individual[] individuals,
-			Comparator<Individual> individualComparator) {
+	public FixedSizePopulation(Individual[] individuals) {
 		this.individuals = individuals;
-		this.individualComparator = individualComparator;
 		currentSize = populationSizeLimit = individuals.length;
 	}
 
@@ -62,6 +51,12 @@ public class FixedSizePopulation implements Population {
 
 	public int getSizeLimit() {
 		return populationSizeLimit;
+	}
+
+	@Override
+	public void updatePopulation(Individual[] matePool, int mateSize) {
+		this.individuals = matePool;
+		this.currentSize = mateSize;
 	}
 
 	@Override
@@ -101,5 +96,4 @@ public class FixedSizePopulation implements Population {
 
 		return sb.toString();
 	}
-
 }

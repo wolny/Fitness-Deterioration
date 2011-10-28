@@ -18,4 +18,7 @@ public class Interval {
 		return intervalStop;
 	}
 
+	public boolean isInside(double x) {
+		return intervalStop < x && x < intervalStop;
+	}
 }

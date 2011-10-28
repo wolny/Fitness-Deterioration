@@ -12,7 +12,6 @@ import ki.edu.agh.population.EuclideanSpacePhenotype;
 import ki.edu.agh.population.FixedSizePopulation;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.IndividualWithRealVectorPhenotype;
-import ki.edu.agh.population.MaximizationIndividualComparator;
 import ki.edu.agh.population.Population;
 import ki.edu.agh.print.PrintUtils;
 import ki.edu.agh.statistics.PointGenerator;
@@ -132,8 +131,7 @@ public class FakeEA extends AbstractEvolutionaryAlgorithm implements
 	@Override
 	public Population getPopulation() {
 		Population population = new FixedSizePopulation(getIndividuals()
-				.toArray(new IndividualWithRealVectorPhenotype[0]),
-				new MaximizationIndividualComparator());
+				.toArray(new IndividualWithRealVectorPhenotype[0]));
 		return population;
 	}
 
@@ -165,5 +163,11 @@ public class FakeEA extends AbstractEvolutionaryAlgorithm implements
 		FakeEA fakeEA = applicationContext.getBean(FakeEA.class);
 		fakeEA.execute();
 		fakeEA.execute();
+	}
+
+	@Override
+	public boolean checkTerminationCriterion() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

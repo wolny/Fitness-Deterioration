@@ -171,8 +171,6 @@ public abstract class AbstractSequentialNiching implements
 		logger.info("Updating fitness function for the next run");
 		// set new fitness for a problem
 		getProblemDomain().setFitnessFunction(deterioratedFitness);
-		// set deteriorated fitness
-		getEvolutionaryAlgorithm().setFitnessFunction(deterioratedFitness);
 	}
 
 	private void printFitnessLandscape() throws IOException {
@@ -206,10 +204,7 @@ public abstract class AbstractSequentialNiching implements
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		FitnessFunction fitnessFunction = getProblemDomain()
-				.getFitnessFunction();
-		// set fitness function in EA
-		getEvolutionaryAlgorithm().setFitnessFunction(fitnessFunction);
+		getEvolutionaryAlgorithm().setProblemDomain(getProblemDomain());
 
 		// set problem domain in fitness deterioration algorithm for
 		// visualization

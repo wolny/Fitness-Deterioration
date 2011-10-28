@@ -1,20 +1,12 @@
 package ki.edu.agh.evolutionary.reproduction;
 
-import ki.edu.agh.population.Population;
+import ki.edu.agh.population.Individual;
 
-public class RealValueCrossover implements ReproductionAlgorithm {
-	private double crossoverProbability;
+public class RealValueCrossover implements Crossover {
 
-	public double getCrossoverProbability() {
-		return crossoverProbability;
-	}
-
-	public void setCrossoverProbability(double crossoverProbability) {
-		this.crossoverProbability = crossoverProbability;
-	}
-
+	//TODO based on normal distribution
 	@Override
-	public Population reproducePopulation(Population population) {
+	public Individual recombine(Individual i1, Individual i2) {
 		// TODO Auto-generated method stub
 		return null;
 	}
