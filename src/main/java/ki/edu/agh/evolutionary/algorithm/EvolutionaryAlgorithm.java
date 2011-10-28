@@ -5,16 +5,20 @@ import ki.edu.agh.population.Population;
 import ki.edu.agh.problem.ProblemDomain;
 
 public interface EvolutionaryAlgorithm {
-	
+
 	EAResult execute();
 
 	Population getPopulation();
 
+	void setPopulationSize(int size);
+
+	int getPopulationSize();
+
 	Individual[] extractBestIndividuals();
 
 	void setProblemDomain(ProblemDomain problem);
-	
+
 	ProblemDomain getProblemDomain();
-	
+
 	boolean checkTerminationCriterion();
 }

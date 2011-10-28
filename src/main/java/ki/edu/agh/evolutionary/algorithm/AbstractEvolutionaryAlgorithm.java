@@ -13,12 +13,28 @@ import ki.edu.agh.problem.ProblemDomain;
  * @author slo
  * 
  */
+// TODO: write proportionate selection (during reproduction check isFeasible)
+// and
+// reproduction base ond normal
+// distribution
 public abstract class AbstractEvolutionaryAlgorithm implements
 		EvolutionaryAlgorithm {
 	private int generationNumber;
+
+	// simple stop criterion
+	private int maxGenerationNumber;
+	private int populationSize;
 	private ProblemDomain problem;
 	private SelectionAlgorithm selectionAlgorithm;
 	private ReproductionAlgorithm reproductionAlgorithm;
+
+	public int getMaxGenerationNumber() {
+		return maxGenerationNumber;
+	}
+
+	public void setMaxGenerationNumber(int maxGenerationNumber) {
+		this.maxGenerationNumber = maxGenerationNumber;
+	}
 
 	public int getGenerationNumber() {
 		return generationNumber;
@@ -47,16 +63,26 @@ public abstract class AbstractEvolutionaryAlgorithm implements
 
 	public void assignFitness(Population population) {
 		for (Individual individual : population) {
-			individual.setFitness(getFitnessFunction().computeFitness(individual
-					.getPhenotype()));
+			individual.setFitness(getFitnessFunction().computeFitness(
+					individual.getPhenotype()));
 		}
 	}
-	
+
 	@Override
 	public ProblemDomain getProblemDomain() {
 		return problem;
 	}
-	
+
+	@Override
+	public int getPopulationSize() {
+		return populationSize;
+	}
+
+	@Override
+	public void setPopulationSize(int populationSize) {
+		this.populationSize = populationSize;
+	}
+
 	@Override
 	public void setProblemDomain(ProblemDomain problem) {
 		this.problem = problem;
