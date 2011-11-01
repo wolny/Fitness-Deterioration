@@ -63,9 +63,7 @@
 
 		<!-- fitness deterioration algorithm -->
 		<property name="fitnessDeterioration">
-			<bean class="ki.edu.agh.deterioration.WeightedGaussianFitnessDeterioration">
-				<property name="clusterPressure" value="1.0" />
-			</bean>
+			<bean class="ki.edu.agh.deterioration.WeightedGaussianFitnessDeterioration" />
 		</property>
 	</bean>
 

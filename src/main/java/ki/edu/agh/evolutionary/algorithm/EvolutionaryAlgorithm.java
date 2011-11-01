@@ -21,4 +21,8 @@ public interface EvolutionaryAlgorithm {
 	ProblemDomain getProblemDomain();
 
 	boolean checkTerminationCriterion();
+
+	Population replaceNotFeasible(Population pop);
+	
+	void resetStopCriterion();
 }

@@ -29,7 +29,7 @@ public class TournamentSelection implements SelectionAlgorithm {
 	}
 
 	@Override
-	public Individual[] select(Population population, int mateSize) {
+	public Population select(Population population, int mateSize) {
 		Individual[] mate = new Individual[mateSize];
 		int size = 0;
 
@@ -45,8 +45,8 @@ public class TournamentSelection implements SelectionAlgorithm {
 			}
 			mate[size++] = winner;
 		}
-
-		return mate;
+		population.updatePopulation(mate, mateSize);
+		return population;
 	}
 
 	public void setK(int k) {

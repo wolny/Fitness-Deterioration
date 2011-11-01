@@ -19,6 +19,11 @@ public class Interval {
 	}
 
 	public boolean isInside(double x) {
-		return intervalStop < x && x < intervalStop;
+		return intervalStart < x && x < intervalStop;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + intervalStart + ", " + intervalStop + "]";
 	}
 }

@@ -56,7 +56,7 @@ public class GAReproduction implements ReproductionAlgorithm {
 
 	@Override
 	public Population reproducePopulation(Population population) {
-		// shuffle population to increase convergence it should be turned off
+		// shuffle population; WARN: to increase convergence it should be turned off
 		shufflePopulation(population);
 		Individual[] individuals = population.getAllMembers();
 		for (int i = 0; i < population.getSize() - 1; i++) {
@@ -70,7 +70,6 @@ public class GAReproduction implements ReproductionAlgorithm {
 		}
 
 		population.updatePopulation(individuals, population.getSize());
-
 		return population;
 	}
 

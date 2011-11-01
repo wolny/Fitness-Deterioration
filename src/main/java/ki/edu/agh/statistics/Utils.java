@@ -186,6 +186,23 @@ public class Utils {
 				heigh);
 	}
 
+	/**
+	 * 
+	 * we use the fact that if Z is a normal random variable with parameters
+	 * mi=0 and sigma=1 then X = a * Z + b is a normal random variable with
+	 * expected value = b and standard deviation = a. We get the random variable
+	 * Z from Random.nextGaussian()
+	 * 
+	 * @param mean
+	 * @param stdDev
+	 * @return
+	 */
+	public static EuclideanSpacePoint getNormallyDistributedPoint(
+			EuclideanSpacePoint mean, double stdDev) {
+		
+		return null;
+	}
+
 	// TODO: make it adaptive
 	private static Matrix scaleCovarianceMatrix(int dimension,
 			EuclideanSpacePoint meanPoint, List<EuclideanSpacePoint> points,

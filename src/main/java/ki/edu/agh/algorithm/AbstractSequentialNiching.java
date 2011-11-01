@@ -9,23 +9,21 @@ import java.util.List;
 import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.clustering.ClusteringAlgorithm;
 import ki.edu.agh.clustering.SimpleCluster;
-import ki.edu.agh.deterioration.AbstractFitnessDeterioration;
 import ki.edu.agh.deterioration.FitnessDeterioration;
 import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.evolutionary.algorithm.EvolutionaryAlgorithm;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.point.MetricSpacePoint;
 import ki.edu.agh.population.Individual;
+import ki.edu.agh.population.Population;
 import ki.edu.agh.print.PrintUtils;
 import ki.edu.agh.problem.ProblemDomain;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.InitializingBean;
 
-public abstract class AbstractSequentialNiching implements
-		InitializingBean {
+public abstract class AbstractSequentialNiching {
 
-	protected static final Logger logger = Logger
+	protected static final Logger LOG = Logger
 			.getLogger(AbstractSequentialNiching.class);
 
 	private static final int DEF_NUM_OF_NODES = 200;
@@ -93,38 +91,37 @@ public abstract class AbstractSequentialNiching implements
 			Collection<Cluster<MetricSpacePoint>> currentClusters);
 
 	public void run() throws Exception {
-		logger.debug("initializing algorithm ...");
+		LOG.debug("initializing algorithm ...");
 		String fileName = "originalFitnessLand";
-		logger.debug("Printing fitness landscape to file: " + fileName);
+		LOG.debug("Printing fitness landscape to file: " + fileName);
 		PrintUtils.writeProblemPoints(fileName, getProblemDomain(),
 				DEF_NUM_OF_NODES);
 
 		for (currentIteration = 0; currentIteration < getIterationCount(); currentIteration++) {
 			// perform single evolutionary algorithm execution
+			LOG.info("Executing EA ...");
 			getEvolutionaryAlgorithm().execute();
-			Individual[] individuals = getEvolutionaryAlgorithm()
-					.getPopulation().getAllMembers();
 
-			List<MetricSpacePoint> pointsToCluster = new ArrayList<MetricSpacePoint>(
-					individuals.length);
-			for (Individual individual : individuals) {
-				pointsToCluster.add((MetricSpacePoint) individual);
-			}
+			// convert individuals to metric space points
+			Population population = getEvolutionaryAlgorithm().getPopulation();
+			List<MetricSpacePoint> msPoints = convertIndividualsToMetricSpacePoints(population);
+
 			// initialize clustering algorithm
-			getClusteringAlgorithm().setDataSet(pointsToCluster);
+			getClusteringAlgorithm().setDataSet(msPoints);
 
-			logger.info("Performing fitness deterioration ...");
+			LOG.info("Performing clustering and fitness deterioration ...");
 
+			// perform clustering and fitness deterioration
 			Collection<Cluster<MetricSpacePoint>> currentClusters = new LinkedList<Cluster<MetricSpacePoint>>();
 			FitnessFunction deterioratedFitness = performClusteringAndFitnessDeterioration(currentClusters);
 
 			if (currentClusters.size() == 0) {
-				logger.info("Terminating sequential algorithm due to poor clusters quality");
+				LOG.info("Terminating Cluster Supported Fitness Deterioration due to poor clusters quality");
 				break;
 			}
 
 			if (deterioratedFitness == null) {
-				logger.info("Could not create deteriorated fitness function");
+				LOG.info("Could not create deteriorated fitness function");
 				break;
 			}
 
@@ -132,14 +129,25 @@ public abstract class AbstractSequentialNiching implements
 			saveClusters(currentClusters);
 			updateFitnessFunction(deterioratedFitness);
 
+			// reset local stop criterion for EA
+			getEvolutionaryAlgorithm().resetStopCriterion();
+
 			// print fitness landscape
 			printFitnessLandscape();
 		}
 
-		// TODO: perform one last run of EA after finishing our meta algorithm
-
 		// save results
 		extractBestIndividualsFromClusters();
+	}
+
+	private List<MetricSpacePoint> convertIndividualsToMetricSpacePoints(
+			Population population) {
+		List<MetricSpacePoint> msPoints = new ArrayList<MetricSpacePoint>(
+				population.getSize());
+		for (Individual individual : population) {
+			msPoints.add((MetricSpacePoint) individual);
+		}
+		return msPoints;
 	}
 
 	/**
@@ -151,7 +159,7 @@ public abstract class AbstractSequentialNiching implements
 	 */
 	private void saveClusters(
 			Collection<Cluster<MetricSpacePoint>> opticsClusters) {
-		logger.debug("Saving clusters which have given the best deterioration");
+		LOG.debug("Saving clusters which have given the best deterioration");
 
 		for (Cluster<MetricSpacePoint> cluster : opticsClusters) {
 			Cluster<PointWithFitness> simpleCluster = new SimpleCluster<PointWithFitness>();
@@ -168,15 +176,27 @@ public abstract class AbstractSequentialNiching implements
 	}
 
 	private void updateFitnessFunction(FitnessFunction deterioratedFitness) {
-		logger.info("Updating fitness function for the next run");
+		LOG.info("Updating fitness function for the next run");
 		// set new fitness for a problem
 		getProblemDomain().setFitnessFunction(deterioratedFitness);
 	}
 
 	private void printFitnessLandscape() throws IOException {
+		int len = (iterationCount + "").length();
 		int currIter = currentIteration + 1;
-		PrintUtils.writeProblemPoints("fitnessLand_iter" + currIter,
+		String iterStr = makeStr(currIter, len);
+		PrintUtils.writeProblemPoints("fitnessLand_iter" + iterStr,
 				getProblemDomain(), DEF_NUM_OF_NODES);
+	}
+
+	private String makeStr(int currIter, int len) {
+		int zeroCount = len - (currIter + "").length();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < zeroCount; i++) {
+			sb.append("0");
+		}
+		sb.append(currIter);
+		return sb.toString();
 	}
 
 	public List<Cluster<PointWithFitness>> getClusters() {
@@ -200,15 +220,5 @@ public abstract class AbstractSequentialNiching implements
 	public void setFitnessDeterioration(
 			FitnessDeterioration fitnessDeterioration) {
 		this.fitnessDeterioration = fitnessDeterioration;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		getEvolutionaryAlgorithm().setProblemDomain(getProblemDomain());
-
-		// set problem domain in fitness deterioration algorithm for
-		// visualization
-		((AbstractFitnessDeterioration) getFitnessDeterioration())
-				.setDomain(getProblemDomain().getDomain());
 	}
 }

@@ -140,4 +140,16 @@ public class SequentialFakeEA extends AbstractEvolutionaryAlgorithm implements
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public Population replaceNotFeasible(Population pop) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetStopCriterion() {
+		// TODO Auto-generated method stub
+		
+	}
 }

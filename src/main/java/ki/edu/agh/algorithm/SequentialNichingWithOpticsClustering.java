@@ -8,16 +8,18 @@ import ki.edu.agh.clustering.Cluster;
 import ki.edu.agh.clustering.SimpleCluster;
 import ki.edu.agh.clustering.optics.OpticsClustering;
 import ki.edu.agh.clustering.optics.OpticsParamteres;
+import ki.edu.agh.deterioration.AbstractFitnessDeterioration;
 import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.point.MetricSpacePoint;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SequentialNichingWithOpticsClustering extends
-		AbstractSequentialNiching {
+		AbstractSequentialNiching implements InitializingBean {
 
 	@Override
 	protected FitnessFunction performClusteringAndFitnessDeterioration(
@@ -25,7 +27,7 @@ public class SequentialNichingWithOpticsClustering extends
 		// sequential niching
 		OpticsClustering<MetricSpacePoint> optics = (OpticsClustering<MetricSpacePoint>) getClusteringAlgorithm();
 
-		//double delta = 0.5;
+		// double delta = 0.5;
 		Collection<Cluster<MetricSpacePoint>> extractedClusters = optics
 				.cluster(new OpticsParamteres(optics.getEpsilon() * 0.75));
 
@@ -54,17 +56,36 @@ public class SequentialNichingWithOpticsClustering extends
 		return deterioratedFitness;
 	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// set problem domain in fitness deterioration algorithm for
+		// visualization
+		((AbstractFitnessDeterioration) getFitnessDeterioration())
+				.setDomain(getProblemDomain().getDomain());
+		// set optics.minPts; should be 10 <= minPts <= 20
+		OpticsClustering<?> optics = (OpticsClustering<?>) getClusteringAlgorithm();
+		int minPts = getEvolutionaryAlgorithm().getPopulationSize() / 4;
+		if (minPts > 20) {
+			minPts = 20;
+		}
+		if (minPts < 10) {
+			minPts = 10;
+		}
+		optics.setMinPoints(minPts);
+	}
+
 	public static void main(String[] args) throws Exception {
-		logger.debug("main");
+		LOG.debug("main");
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				"application-context1.xml");
-		
-		applicationContext.publishEvent(new ContextStartedEvent(applicationContext));
-		
+				"csfd-langermann-context.xml");
+
+		applicationContext.publishEvent(new ContextStartedEvent(
+				applicationContext));
+
 		AbstractSequentialNiching algorithm = (AbstractSequentialNiching) applicationContext
 				.getBean("algorithm");
 
 		algorithm.run();
-
 	}
+
 }

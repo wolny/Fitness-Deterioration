@@ -1,44 +1,97 @@
 package ki.edu.agh.evolutionary.algorithm;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.EuclideanSpacePhenotype;
 import ki.edu.agh.population.FixedSizePopulation;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.IndividualWithRealVectorPhenotype;
 import ki.edu.agh.population.Population;
+import ki.edu.agh.print.PrintUtils;
 import ki.edu.agh.problem.ProblemDomain;
 
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
+	private static final Logger LOG = Logger
+			.getLogger(RealValueGeneticAlgorithm.class);
 
 	private Population pop;
-	private int populationSize;
-	private int maxGenNum = 500;
+	private int maxGenNum;
+	private int generation;
 
-	public int getPopulationSize() {
-		return populationSize;
+	public int getMaxGenNum() {
+		return maxGenNum;
 	}
 
-	public void setPopulationSize(int populationSize) {
-		this.populationSize = populationSize;
+	public void setMaxGenNum(int maxGenNum) {
+		this.maxGenNum = maxGenNum;
 	}
 
 	@Override
 	public EAResult execute() {
+		LOG.info("executing real-value GA");
 		pop = createInitialPopulation(getProblemDomain(), getPopulationSize());
-
+		LOG.debug("initial population created; population size: "
+				+ getPopulationSize());
+		//writePoints();
 		while (!checkTerminationCriterion()) {
 			// assume that objective function and fitness is the same
 			// (maximization problems)
+			LOG.debug("assigning fitness ...");
 			assignFitness(pop);
 			// selection
-			Individual[] matePool = getSelectionAlgorithm().select(pop,
-					populationSize);
-			pop.updatePopulation(matePool, populationSize);
+			LOG.debug("selection");
+			pop = getSelectionAlgorithm().select(pop, getPopulationSize());
 			// reproduction
-			getReproductionAlgorithm().reproducePopulation(pop);
-		}
+			LOG.debug("reproduction");
+			pop = getReproductionAlgorithm().reproducePopulation(pop);
 
+			// replace not feasible points by random points from domain
+			pop = replaceNotFeasible(pop);
+
+			generation++;
+			//writePoints();
+		}
+		// some solutions may not be feasible so assign fitness
+		assignFitness(pop);
 		return null;
+	}
+
+	private void writePoints() {
+		LOG.debug("printing generation ...");
+		List<EuclideanSpacePoint> points = new ArrayList<EuclideanSpacePoint>(
+				pop.getSize());
+		for (Individual ind : pop) {
+			EuclideanSpacePhenotype esp = (EuclideanSpacePhenotype) ind
+					.getPhenotype();
+			points.add(esp.getPoint());
+		}
+		try {
+			PrintUtils.writePoints("generation" + generation + ".dat", points);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Population replaceNotFeasible(Population population) {
+		ProblemDomain problem = getProblemDomain();
+		for (Individual individual : population) {
+			if (!problem.isFeasible(individual.getPhenotype())) {
+				LOG.debug("phenotype: " + individual.getPhenotype()
+						+ " not feasible");
+				IndividualWithRealVectorPhenotype ind = (IndividualWithRealVectorPhenotype) individual;
+				ind.setPhenotype(new EuclideanSpacePhenotype(problem
+						.createRandomPoint()));
+			}
+		}
+		return population;
 	}
 
 	private Population createInitialPopulation(ProblemDomain problemDomain,
@@ -65,7 +118,20 @@ public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
 	@Override
 	public boolean checkTerminationCriterion() {
-		// TODO: sth clever
-		return getGenerationNumber() > maxGenNum;
+		return generation > maxGenNum;
 	}
+
+	@Override
+	public void resetStopCriterion() {
+		generation = 0;
+	}
+
+	public static void main(String[] args) {
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				"ga-rastrigin-context.xml");
+		EvolutionaryAlgorithm algorithm = context
+				.getBean(EvolutionaryAlgorithm.class);
+		algorithm.execute();
+	}
+
 }

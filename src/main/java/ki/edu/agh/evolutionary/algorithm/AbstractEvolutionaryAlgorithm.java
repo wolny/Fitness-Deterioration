@@ -14,35 +14,12 @@ import ki.edu.agh.problem.ProblemDomain;
  * 
  */
 // TODO: write proportionate selection (during reproduction check isFeasible)
-// and
-// reproduction base ond normal
-// distribution
 public abstract class AbstractEvolutionaryAlgorithm implements
 		EvolutionaryAlgorithm {
-	private int generationNumber;
-
-	// simple stop criterion
-	private int maxGenerationNumber;
 	private int populationSize;
-	private ProblemDomain problem;
+	private ProblemDomain problemDomain;
 	private SelectionAlgorithm selectionAlgorithm;
 	private ReproductionAlgorithm reproductionAlgorithm;
-
-	public int getMaxGenerationNumber() {
-		return maxGenerationNumber;
-	}
-
-	public void setMaxGenerationNumber(int maxGenerationNumber) {
-		this.maxGenerationNumber = maxGenerationNumber;
-	}
-
-	public int getGenerationNumber() {
-		return generationNumber;
-	}
-
-	public void increaseGenerationNumber() {
-		generationNumber++;
-	}
 
 	public SelectionAlgorithm getSelectionAlgorithm() {
 		return selectionAlgorithm;
@@ -61,7 +38,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements
 		this.reproductionAlgorithm = reproductionAlgorithm;
 	}
 
-	public void assignFitness(Population population) {
+	protected void assignFitness(Population population) {
 		for (Individual individual : population) {
 			individual.setFitness(getFitnessFunction().computeFitness(
 					individual.getPhenotype()));
@@ -70,7 +47,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements
 
 	@Override
 	public ProblemDomain getProblemDomain() {
-		return problem;
+		return problemDomain;
 	}
 
 	@Override
@@ -85,7 +62,7 @@ public abstract class AbstractEvolutionaryAlgorithm implements
 
 	@Override
 	public void setProblemDomain(ProblemDomain problem) {
-		this.problem = problem;
+		this.problemDomain = problem;
 	}
 
 	private FitnessFunction getFitnessFunction() {

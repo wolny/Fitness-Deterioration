@@ -7,11 +7,20 @@ import ki.edu.agh.population.Phenotype;
 
 public interface ProblemDomain {
 	Functor getFunctor();
+
 	Domain getDomain();
+
 	FitnessFunction getFitnessFunction();
+
 	void setFitnessFunction(FitnessFunction fitnessFunction);
+
 	boolean isMinimization();
+
 	void setMinimization(boolean minimization);
+
 	boolean isFeasible(Phenotype phenotype);
+
 	EuclideanSpacePoint[] getRandomPoints(int popSize);
+
+	EuclideanSpacePoint createRandomPoint();
 }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean name="geneticAlgorithm"
+		class="ki.edu.agh.evolutionary.algorithm.RealValueGeneticAlgorithm">
+		<property name="populationSize" value="50" />
+		<property name="selectionAlgorithm">
+			<bean class="ki.edu.agh.evolutionary.selection.StochasticUniversalSampling">
+				<!-- max population size -->
+				<constructor-arg value="100" />
+			</bean>
+		</property>
+		<property name="reproductionAlgorithm">
+			<bean class="ki.edu.agh.evolutionary.reproduction.GAReproduction">
+				<property name="crossoverProbability" value="1.0" />
+				<property name="mutationProbability" value="0.1" />
+				<property name="mutation">
+					<bean class="ki.edu.agh.evolutionary.reproduction.RealValueMutation">
+						<property name="standardDeviation" value="0.5" />
+					</bean>
+				</property>
+				<property name="crossover">
+					<bean class="ki.edu.agh.evolutionary.reproduction.RealValueCrossover">
+						<property name="standardDeviation" value="0.2" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+
+		<property name="maxGenNum" value="50" />
+
+		<property name="problemDomain">
+			<bean class="ki.edu.agh.problem.MultimodalRealSpaceProblem">
+				<property name="domain" ref="domain2x2" />
+				<property name="fitnessFunction">
+					<bean class="ki.edu.agh.fintess.StandardFitnessFunction">
+						<constructor-arg>
+							<bean class="ki.edu.agh.functors.TriModalFunction" />
+						</constructor-arg>
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="domain2x2" class="ki.edu.agh.problem.Domain">
+		<property name="multidimensionalCube">
+			<list>
+				<!-- first dimension interval -->
+				<bean class="ki.edu.agh.problem.Interval">
+					<constructor-arg value="-4." />
+					<constructor-arg value="4." />
+				</bean>
+				<!-- second dimension interval -->
+				<bean class="ki.edu.agh.problem.Interval">
+					<constructor-arg value="-4." />
+					<constructor-arg value="4." />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+</beans>
+

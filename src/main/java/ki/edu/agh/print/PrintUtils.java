@@ -11,6 +11,7 @@ import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.fintess.StandardFitnessFunction;
 import ki.edu.agh.functors.Functor;
+import ki.edu.agh.functors.LangermannFunction;
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.Population;
@@ -85,30 +86,14 @@ public class PrintUtils {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Functor functor = new Functor() {
-			@Override
-			public double getValue(EuclideanSpacePoint point) {
-				double x = point.getCoordinate(0);
-				double y = point.getCoordinate(1);
-
-				double result = 2.0
-						* Math.exp(-((x + 1.) * (x + 1.) + (y + 1.) * (y + 1.)))
-						+ 1.5
-						* Math.exp(-((x - 1.1) * (x - 1.1) + y * y))
-						+ 4.0
-						* Math.exp(-3.0
-								* ((x + 1.5) * (x + 1.5) + (y - 1.5)
-										* (y - 1.5)));
-				return result;
-			}
-		};
+		Functor functor = new LangermannFunction();
 		FitnessFunction fitnessFunction = new StandardFitnessFunction(functor);
 		Domain domain = new Domain();
-		Interval i1 = new Interval(-4, 4);
-		Interval i2 = new Interval(-4, 4);
+		Interval i1 = new Interval(0, 4);
+		Interval i2 = new Interval(-1, 3);
 		domain.setMultidimensionalCube(Arrays.asList(i1, i2));
 		ProblemDomain problem = new MultimodalRealSpaceProblem(domain,
 				fitnessFunction);
-		writeProblemPoints("tri_modal", problem, 400);
+		writeProblemPoints("langermann", problem, 400);
 	}
 }

@@ -6,12 +6,11 @@ public class UniModalFunction implements Functor {
 
 	@Override
 	public double getValue(EuclideanSpacePoint point) {
-		double sqrSum = 0.;
-		for (double coord : point.getCoordinates()) {
-			sqrSum += coord * coord;
-		}
+		double x = point.getCoordinate(0);
+		double y = point.getCoordinate(1);
+		double result = 2.0 * Math.exp(-((x + 1.) * (x + 1.) + (y + 1.)
+				* (y + 1.)));
 
-		return 2. * Math.exp(-sqrSum);
+		return result;
 	}
-
 }

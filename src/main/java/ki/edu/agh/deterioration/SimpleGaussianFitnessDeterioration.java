@@ -40,8 +40,7 @@ public class SimpleGaussianFitnessDeterioration extends
 			double fitnessValue = fitness.computeFitness(phenotype);
 			double sum = 0.0;
 			for (Functor crunchingFunctor : crunchingFunctions) {
-				sum += crunchingFunctor
-						.getValue(x);
+				sum += crunchingFunctor.getValue(x);
 			}
 			int sign = isMinimization() ? 1 : -1;
 			return fitnessValue + sign * sum;

@@ -36,7 +36,7 @@ public class OrderedSelection implements SelectionAlgorithm {
 	}
 
 	@Override
-	public Individual[] select(Population population, int mateSize) {
+	public Population select(Population population, int mateSize) {
 		double power = 1 / (1 - (Math.log(k) / Math.log(mateSize)));
 		Individual[] mate = new Individual[mateSize];
 		int size = 0;
@@ -48,8 +48,8 @@ public class OrderedSelection implements SelectionAlgorithm {
 			Individual individual = population.get(index);
 			mate[size++] = individual;
 		}
-
-		return mate;
+		population.updatePopulation(mate, mateSize);
+		return population;
 	}
 
 	public double getK() {
@@ -66,9 +66,9 @@ public class OrderedSelection implements SelectionAlgorithm {
 
 		System.out.println();
 		OrderedSelection selection = new OrderedSelection(6);
-		Individual[] mate = selection.select(pop, 100);
-		Arrays.sort(mate, new IndividualComparator());
-		for (Individual i : mate) {
+		pop = selection.select(pop, 100);
+		Arrays.sort(pop.getAllMembers(), new IndividualComparator());
+		for (Individual i : pop) {
 			System.out.println(i);
 		}
 	}

@@ -41,7 +41,7 @@ public interface Population extends Iterable<Individual> {
 	void sortMembers();
 
 	/**
-	 * should be invoked after selection algorithm to update matePool
+	 * should be in selection/reproduction algorithm to update matePool
 	 * 
 	 * @param matePool
 	 * @param mateSize

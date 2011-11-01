@@ -40,14 +40,11 @@ public class WeightedGaussianFitnessDeterioration extends
 
 		private FitnessFunction fitness;
 		private Collection<ClusterCrunchingFunctor> crunchingFunctions;
-		private double clusterPressure;
 
 		public WeightedDeterioratedFitness(FitnessFunction currentFitness,
-				Collection<ClusterCrunchingFunctor> crunchingFunctions,
-				double clusterPressure) {
+				Collection<ClusterCrunchingFunctor> crunchingFunctions) {
 			this.fitness = currentFitness;
 			this.crunchingFunctions = crunchingFunctions;
-			this.clusterPressure = clusterPressure;
 		}
 
 		@Override
@@ -84,21 +81,11 @@ public class WeightedGaussianFitnessDeterioration extends
 			for (ClusterCrunchingFunctor crunchingFunction : crunchingFunctions) {
 				double distance = x.getDistance(crunchingFunction
 						.getClusterCenter());
-				result.add(1.0 / Math.pow(distance, clusterPressure));
+				result.add(1.0 / distance);
 			}
 			return result;
 		}
 
-	}
-
-	private double clusterPressure;
-
-	public double getClusterPressure() {
-		return clusterPressure;
-	}
-
-	public void setClusterPressure(double clusterPressure) {
-		this.clusterPressure = clusterPressure;
 	}
 
 	@Override
@@ -112,7 +99,7 @@ public class WeightedGaussianFitnessDeterioration extends
 					.add((ClusterCrunchingFunctor) crunchingFunction);
 		}
 		return new WeightedDeterioratedFitness(currentFitness,
-				clusterCrunchingFunctions, getClusterPressure());
+				clusterCrunchingFunctions);
 	}
 
 	@Override
