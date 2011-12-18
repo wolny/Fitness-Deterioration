@@ -6,24 +6,38 @@ import java.util.List;
 
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.EuclideanSpacePhenotype;
-import ki.edu.agh.population.FixedSizePopulation;
 import ki.edu.agh.population.Individual;
-import ki.edu.agh.population.IndividualWithRealVectorPhenotype;
 import ki.edu.agh.population.Population;
 import ki.edu.agh.print.PrintUtils;
-import ki.edu.agh.problem.ProblemDomain;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
-	private static final Logger LOG = Logger
-			.getLogger(RealValueGeneticAlgorithm.class);
+	static final Logger LOG = Logger.getLogger(RealValueGeneticAlgorithm.class);
 
 	private Population pop;
 	private int maxGenNum;
 	private int generation;
+	private int addIndNum;
+	private boolean plotGeneration = true;
+
+	public boolean isPlotGeneration() {
+		return plotGeneration;
+	}
+
+	public void setPlotGeneration(boolean plotGeneration) {
+		this.plotGeneration = plotGeneration;
+	}
+
+	public int getAddIndNum() {
+		return addIndNum;
+	}
+
+	public void setAddIndNum(int addIndNum) {
+		this.addIndNum = addIndNum;
+	}
 
 	public int getMaxGenNum() {
 		return maxGenNum;
@@ -37,9 +51,9 @@ public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 	public EAResult execute() {
 		LOG.info("executing real-value GA");
 		pop = createInitialPopulation(getProblemDomain(), getPopulationSize());
-		LOG.debug("initial population created; population size: "
+		LOG.info("initial population created; population size: "
 				+ getPopulationSize());
-		//writePoints();
+		writePoints();
 		while (!checkTerminationCriterion()) {
 			// assume that objective function and fitness is the same
 			// (maximization problems)
@@ -56,7 +70,9 @@ public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 			pop = replaceNotFeasible(pop);
 
 			generation++;
-			//writePoints();
+			if (isPlotGeneration()) {
+				writePoints();
+			}
 		}
 		// some solutions may not be feasible so assign fitness
 		assignFitness(pop);
@@ -80,32 +96,6 @@ public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 	}
 
 	@Override
-	public Population replaceNotFeasible(Population population) {
-		ProblemDomain problem = getProblemDomain();
-		for (Individual individual : population) {
-			if (!problem.isFeasible(individual.getPhenotype())) {
-				LOG.debug("phenotype: " + individual.getPhenotype()
-						+ " not feasible");
-				IndividualWithRealVectorPhenotype ind = (IndividualWithRealVectorPhenotype) individual;
-				ind.setPhenotype(new EuclideanSpacePhenotype(problem
-						.createRandomPoint()));
-			}
-		}
-		return population;
-	}
-
-	private Population createInitialPopulation(ProblemDomain problemDomain,
-			int popSize) {
-		EuclideanSpacePoint[] points = problemDomain.getRandomPoints(popSize);
-		Individual[] individuals = new Individual[popSize];
-		for (int i = 0; i < popSize; i++) {
-			individuals[i] = new IndividualWithRealVectorPhenotype(
-					new EuclideanSpacePhenotype(points[i]));
-		}
-		return new FixedSizePopulation(individuals);
-	}
-
-	@Override
 	public Population getPopulation() {
 		return pop;
 	}
@@ -124,6 +114,8 @@ public class RealValueGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 	@Override
 	public void resetStopCriterion() {
 		generation = 0;
+		int size = getPopulationSize();
+		setPopulationSize(size + getAddIndNum());
 	}
 
 	public static void main(String[] args) {

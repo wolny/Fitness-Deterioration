@@ -99,6 +99,7 @@ public abstract class AbstractSequentialNiching {
 
 		for (currentIteration = 0; currentIteration < getIterationCount(); currentIteration++) {
 			// perform single evolutionary algorithm execution
+			LOG.info("Iteration: " + currentIteration);
 			LOG.info("Executing EA ...");
 			getEvolutionaryAlgorithm().execute();
 

@@ -100,7 +100,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>ki.edu.agh.algorithm.SequentialDeteriorationEAWithOpticsClustering</mainClass>
+					<mainClass>ki.edu.agh.algorithm.SequentialNichingWithOpticsClustering</mainClass>
 					<!-- <arguments> <argument>argument1</argument> </arguments> <systemProperties> 
 						<systemProperty> <key>myproperty</key> <value>myvalue</value> </systemProperty> 
 						</systemProperties> -->

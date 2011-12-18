@@ -41,7 +41,7 @@
 		<property name="selectionAlgorithm">
 			<bean class="ki.edu.agh.evolutionary.selection.StochasticUniversalSampling">
 				<!-- max population size -->
-				<constructor-arg value="400" />
+				<constructor-arg value="2000" />
 			</bean>
 		</property>
 		<property name="reproductionAlgorithm">
@@ -55,13 +55,15 @@
 				</property>
 				<property name="crossover">
 					<bean class="ki.edu.agh.evolutionary.reproduction.RealValueCrossover">
-						<property name="standardDeviation" value="0.2" />
+						<property name="standardDeviation" value="0.1" />
 					</bean>
 				</property>
 			</bean>
 		</property>
 
 		<property name="maxGenNum" value="160" />
+		<!-- increases the number of individuals in population -->
+		<property name="addIndNum" value="2" />
 
 		<property name="problemDomain" ref="problem" />
 	</bean>
@@ -75,7 +77,7 @@
 			<bean class="ki.edu.agh.fintess.StandardFitnessFunction">
 				<!-- TODO: change it to test different multimodal functions -->
 				<constructor-arg>
-					<bean class="ki.edu.agh.functors.LangermannFunction" />
+					<bean class="ki.edu.agh.functors.RastriginFunction" />
 				</constructor-arg>
 			</bean>
 		</property>

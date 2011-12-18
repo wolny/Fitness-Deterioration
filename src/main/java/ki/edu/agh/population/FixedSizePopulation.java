@@ -87,6 +87,23 @@ public class FixedSizePopulation implements Population {
 	}
 
 	@Override
+	public Individual extractBestIndividual() {
+		if (getSize() == 0) {
+			throw new RuntimeException(
+					"cannot extract an individual from empty population");
+		}
+		Individual best = get(0);
+		for (int i = 0; i < getSize(); i++) {
+			Individual ind = get(i);
+			if (individualComparator.compare(ind, best) < 0) {
+				best = ind;
+			}
+		}
+
+		return best;
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
@@ -96,4 +113,5 @@ public class FixedSizePopulation implements Population {
 
 		return sb.toString();
 	}
+
 }

@@ -11,7 +11,7 @@ import ki.edu.agh.deterioration.PointWithFitness;
 import ki.edu.agh.fintess.FitnessFunction;
 import ki.edu.agh.fintess.StandardFitnessFunction;
 import ki.edu.agh.functors.Functor;
-import ki.edu.agh.functors.LangermannFunction;
+import ki.edu.agh.functors.RastriginFunction;
 import ki.edu.agh.point.EuclideanSpacePoint;
 import ki.edu.agh.population.Individual;
 import ki.edu.agh.population.Population;
@@ -86,14 +86,14 @@ public class PrintUtils {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Functor functor = new LangermannFunction();
+		Functor functor = new RastriginFunction();
 		FitnessFunction fitnessFunction = new StandardFitnessFunction(functor);
 		Domain domain = new Domain();
-		Interval i1 = new Interval(0, 4);
-		Interval i2 = new Interval(-1, 3);
+		Interval i1 = new Interval(-4, 4);
+		Interval i2 = new Interval(-4, 4);
 		domain.setMultidimensionalCube(Arrays.asList(i1, i2));
 		ProblemDomain problem = new MultimodalRealSpaceProblem(domain,
 				fitnessFunction);
-		writeProblemPoints("langermann", problem, 400);
+		writeProblemPoints("rastrigin", problem, 400);
 	}
 }

@@ -77,7 +77,7 @@ public class SequentialNichingWithOpticsClustering extends
 	public static void main(String[] args) throws Exception {
 		LOG.debug("main");
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				"csfd-langermann-context.xml");
+				"csfd-3mod-context.xml");
 
 		applicationContext.publishEvent(new ContextStartedEvent(
 				applicationContext));

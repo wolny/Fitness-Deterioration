@@ -47,4 +47,6 @@ public interface Population extends Iterable<Individual> {
 	 * @param mateSize
 	 */
 	void updatePopulation(Individual[] matePool, int mateSize);
+	
+	Individual extractBestIndividual();
 }
